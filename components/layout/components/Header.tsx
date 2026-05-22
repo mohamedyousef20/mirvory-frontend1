@@ -43,9 +43,9 @@ export const Header = ({ cartCount = 0 }: HeaderProps) => {
             <a href="/categories" className="text-sm font-medium hover:text-primary transition-colors">
               التصنيفات
             </a>
-            <a href="/offers" className="text-sm font-medium hover:text-primary transition-colors">
+            {/* <a href="/offers" className="text-sm font-medium hover:text-primary transition-colors">
               العروض
-            </a>
+            </a> */}
           </nav>
 
           <div className="flex items-center space-x-4">

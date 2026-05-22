@@ -896,17 +896,29 @@ export function useAdminDashboard() {
     const updatePaymentStatus = async (orderId: string, status: string) => {
         try {
             await orderService.updatePaymentStatus(orderId, status);
+
             setOrders(prev =>
                 prev.map(order =>
-                    order._id === orderId ? { ...order, paymentStatus: status } : order
+                    order._id === orderId
+                        ? { ...order, paymentStatus: status }
+                        : order
                 )
             );
-            toast.success(isArabic ? 'تم تحديث حالة الدفع بنجاح' : 'Payment status updated successfully');
+
+            toast.success(
+                isArabic
+                    ? 'تم تحديث حالة الدفع بنجاح'
+                    : 'Payment status updated successfully'
+            );
         } catch (error: any) {
-            toast.error(error.response?.data?.message || (isArabic ? 'حدث خطأ أثناء تحديث حالة الدفع' : 'Failed to update payment status'));
+            toast.error(
+                error.response?.data?.message ||
+                (isArabic
+                    ? 'حدث خطأ أثناء تحديث حالة الدفع'
+                    : 'Failed to update payment status')
+            );
         }
     };
-
     const fetchPickupPoints = async () => {
         try {
             setLoadingPickupPoints(true);

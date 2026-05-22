@@ -15,7 +15,6 @@ import {
     Truck,
     XCircle,
     ExternalLink,
-    ChevronLeft,
     ShoppingCart,
     Filter,
     Calendar,
@@ -26,9 +25,8 @@ import {
     MoreVertical,
     Download,
     Repeat,
-   Headset,
+    Headset,
     Star,
-    AlertCircle,
     ChevronRight,
     Home,
     Sparkles,
@@ -47,12 +45,6 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import {
-    Tabs,
-    TabsContent,
-    TabsList,
-    TabsTrigger,
-} from "@/components/ui/tabs";
-import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
@@ -60,26 +52,9 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-    Badge
-} from "@/components/ui/badge";
-import {
-    Button
-} from "@/components/ui/button";
-import {
-    Progress
-} from "@/components/ui/progress";
-import {
-    Avatar,
-    AvatarFallback,
-    AvatarImage,
-} from "@/components/ui/avatar";
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import {
     Select,
     SelectContent,
@@ -189,21 +164,21 @@ export default function OrdersPage() {
         const configs = {
             pending: {
                 icon: Clock,
-                color: 'bg-amber-500',
+                color: 'bg-sky-500',
                 text: 'قيد الانتظار',
                 description: 'في انتظار تأكيد الدفع',
-                bgColor: 'bg-amber-50',
-                textColor: 'text-amber-700',
-                borderColor: 'border-amber-200'
+                bgColor: 'bg-sky-50',
+                textColor: 'text-sky-700',
+                borderColor: 'border-sky-200'
             },
             processing: {
                 icon: Package,
-                color: 'bg-blue-500',
+                color: 'bg-indigo-500',
                 text: 'قيد المعالجة',
                 description: 'جاري تجهيز الطلب',
-                bgColor: 'bg-blue-50',
-                textColor: 'text-blue-700',
-                borderColor: 'border-blue-200'
+                bgColor: 'bg-indigo-50',
+                textColor: 'text-indigo-700',
+                borderColor: 'border-indigo-200'
             },
             shipped: {
                 icon: Truck,
@@ -248,7 +223,7 @@ export default function OrdersPage() {
     const getPaymentStatusConfig = (paymentStatus: Order['paymentStatus']) => {
         const configs = {
             pending: {
-                color: 'bg-amber-100 text-amber-800',
+                color: 'bg-sky-100 text-sky-800',
                 text: 'بانتظار الدفع'
             },
             paid: {
@@ -314,65 +289,63 @@ export default function OrdersPage() {
     const stats = getOrderStats();
 
     if (loading) {
-        return (<MirvoryPageLoader text= " جاري تحميل طلباتك..."  />
-
-        );
+        return <MirvoryPageLoader text="جاري تحميل طلباتك..." />;
     }
 
     if (orders.length === 0) {
         return (
-            <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-12 px-4">
+            <div className="min-h-screen bg-slate-50 py-12 px-4">
                 <div className="container mx-auto max-w-4xl">
                     <div className="text-center">
                         <div className="relative inline-block mb-8">
-                            <div className="w-32 h-32 bg-gradient-to-br from-primary/10 to-primary/5 rounded-full flex items-center justify-center">
+                            <div className="w-32 h-32 bg-primary/10 rounded-full flex items-center justify-center">
                                 <ShoppingBag className="w-16 h-16 text-primary/60" />
                             </div>
-                            <div className="absolute -bottom-2 -right-2 w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center animate-bounce">
+                            <div className="absolute -bottom-2 -right-2 w-16 h-16 bg-emerald-500 rounded-full flex items-center justify-center animate-bounce shadow-lg shadow-emerald-200">
                                 <Sparkles className="w-8 h-8 text-white" />
                             </div>
                         </div>
 
                         <div className="max-w-md mx-auto mb-10">
-                            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                            <h1 className="text-2xl md:text-4xl font-bold text-slate-900 mb-4">
                                 لا توجد طلبات حتى الآن
                             </h1>
-                            <p className="text-lg text-gray-600 leading-relaxed">
+                            <p className="text-base md:text-lg text-slate-500 leading-relaxed">
                                 ابدأ رحلة التسوق واكتشف منتجاتنا المميزة
                             </p>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto mb-12">
-                            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-                                <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-4">
-                                    <ShoppingCart className="w-6 h-6 text-blue-600" />
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto mb-12">
+                            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                                <div className="w-12 h-12 bg-sky-50 rounded-xl flex items-center justify-center mb-4 mx-auto sm:mx-0">
+                                    <ShoppingCart className="w-6 h-6 text-sky-600" />
                                 </div>
-                                <h3 className="font-semibold text-gray-900 mb-2">تصفح المنتجات</h3>
-                                <p className="text-sm text-gray-600">اكتشف آلاف المنتجات المميزة</p>
+                                <h3 className="font-semibold text-slate-900 mb-2">تصفح المنتجات</h3>
+                                <p className="text-sm text-slate-500">اكتشف آلاف المنتجات المميزة</p>
                             </div>
 
-                            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-                                <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center mb-4">
+                            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                                <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center mb-4 mx-auto sm:mx-0">
                                     <BadgeCheck className="w-6 h-6 text-emerald-600" />
                                 </div>
-                                <h3 className="font-semibold text-gray-900 mb-2">توصيل سريع</h3>
-                                <p className="text-sm text-gray-600">توصيل في جميع أنحاء مصر</p>
+                                <h3 className="font-semibold text-slate-900 mb-2">توصيل سريع</h3>
+                                <p className="text-sm text-slate-500">توصيل في جميع أنحاء مصر</p>
                             </div>
 
-                            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-                                <div className="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center mb-4">
-                                    <Shield className="w-6 h-6 text-amber-600" />
+                            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                                <div className="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center mb-4 mx-auto sm:mx-0">
+                                    <Shield className="w-6 h-6 text-indigo-600" />
                                 </div>
-                                <h3 className="font-semibold text-gray-900 mb-2">دفع آمن</h3>
-                                <p className="text-sm text-gray-600">مدفوعات مشفرة وآمنة</p>
+                                <h3 className="font-semibold text-slate-900 mb-2">دفع آمن</h3>
+                                <p className="text-sm text-slate-500">مدفوعات مشفرة وآمنة</p>
                             </div>
                         </div>
 
-                        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                        <div className="flex flex-col sm:flex-row gap-3 justify-center">
                             <Button
                                 size="lg"
                                 onClick={() => router.push('/')}
-                                className="px-8 py-6 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all"
+                                className="w-full sm:w-auto px-8 py-6 text-base rounded-2xl shadow-lg hover:shadow-xl transition-all"
                             >
                                 <ShoppingBag className="w-5 h-5 ml-2" />
                                 ابدأ التسوق الآن
@@ -381,7 +354,7 @@ export default function OrdersPage() {
                                 size="lg"
                                 variant="outline"
                                 onClick={() => router.push('/products')}
-                                className="px-8 py-6 text-lg rounded-xl"
+                                className="w-full sm:w-auto px-8 py-6 text-base rounded-2xl"
                             >
                                 تصفح الكتالوج
                                 <ExternalLink className="w-5 h-5 mr-2" />
@@ -393,142 +366,129 @@ export default function OrdersPage() {
         );
     }
 
+    const filters = [
+        { id: 'all', label: 'الكل', icon: Filter },
+        { id: 'pending', label: 'الانتظار', icon: Clock },
+        { id: 'processing', label: 'التجهيز', icon: Package },
+        { id: 'shipped', label: 'الشحن', icon: Truck },
+        { id: 'delivered', label: 'التسليم', icon: CheckCircle },
+        { id: 'cancelled', label: 'ملغية', icon: XCircle },
+    ];
+
     return (
-        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-            {/* Header */}
-            <div className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b">
-                <div className="container mx-auto px-4 py-6">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                        <div className="flex items-center gap-4">
-                            <div className="p-3 bg-gradient-to-br from-primary/10 to-primary/5 rounded-2xl">
-                                <ShoppingBag className="w-8 h-8 text-primary" />
+        <div className="min-h-screen bg-slate-50/50 pb-20">
+            {/* Mobile/Desktop Glass Header */}
+            <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200">
+                <div className="container mx-auto px-4 py-4 md:py-6">
+                    <div className="flex flex-row items-center justify-between gap-4">
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 md:p-3 bg-primary/10 rounded-xl md:rounded-2xl shrink-0">
+                                <ShoppingBag className="w-6 h-6 md:w-8 md:h-8 text-primary" />
                             </div>
                             <div>
-                                <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+                                <h1 className="text-xl md:text-3xl font-bold text-slate-900">
                                     طلباتي
                                 </h1>
-                                <p className="text-gray-600 mt-1 flex items-center gap-2">
-                                    <span>تتبع جميع طلباتك في مكان واحد</span>
-                                    <Badge variant="secondary" className="text-xs">
-                                        {stats.total} طلب
-                                    </Badge>
+                                <p className="text-slate-500 text-xs md:text-sm mt-0.5 md:mt-1 hidden sm:flex items-center gap-2">
+                                    تتبع جميع طلباتك في مكان واحد
                                 </p>
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2">
                             <Button
                                 variant="outline"
                                 onClick={refreshOrders}
                                 disabled={refreshing}
                                 size="sm"
-                                className="gap-2"
+                                className="rounded-xl hidden sm:flex gap-2"
                             >
-                                {refreshing ? (
-                                    <Loader2 className="w-4 h-4 animate-spin" />
-                                ) : (
-                                    <Repeat className="w-4 h-4" />
-                                )}
+                                {refreshing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Repeat className="w-4 h-4" />}
                                 تحديث
                             </Button>
                             <Button
                                 variant="outline"
                                 onClick={() => router.push('/')}
-                                size="sm"
-                                className="gap-2"
+                                size="icon"
+                                className="rounded-xl sm:hidden"
                             >
                                 <Home className="w-4 h-4" />
-                                العودة للرئيسية
                             </Button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* Stats Bar */}
-            <div className="container mx-auto px-4 py-6">
-                <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
-                    <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-                        <div className="text-2xl font-bold text-gray-900">{stats.total}</div>
-                        <div className="text-sm text-gray-600">إجمالي الطلبات</div>
+            {/* Stats Grid - Swipeable on mobile */}
+            <div className="container mx-auto px-4 pt-6 pb-2">
+                <div className="flex overflow-x-auto snap-x snap-mandatory gap-3 pb-4 hide-scrollbar">
+                    <div className="snap-start min-w-[130px] flex-1 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm shrink-0">
+                        <div className="text-xl md:text-2xl font-bold text-slate-900">{stats.total}</div>
+                        <div className="text-xs md:text-sm text-slate-500 mt-1">إجمالي الطلبات</div>
                     </div>
-                    <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-                        <div className="text-2xl font-bold text-amber-600">{stats.pending}</div>
-                        <div className="text-sm text-gray-600">قيد الانتظار</div>
+                    <div className="snap-start min-w-[130px] flex-1 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm shrink-0">
+                        <div className="text-xl md:text-2xl font-bold text-sky-600">{stats.pending}</div>
+                        <div className="text-xs md:text-sm text-slate-500 mt-1">قيد الانتظار</div>
                     </div>
-                    <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-                        <div className="text-2xl font-bold text-blue-600">{stats.processing}</div>
-                        <div className="text-sm text-gray-600">قيد التجهيز</div>
+                    <div className="snap-start min-w-[130px] flex-1 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm shrink-0">
+                        <div className="text-xl md:text-2xl font-bold text-indigo-600">{stats.processing}</div>
+                        <div className="text-xs md:text-sm text-slate-500 mt-1">قيد التجهيز</div>
                     </div>
-                    <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-                        <div className="text-2xl font-bold text-purple-600">{stats.shipped}</div>
-                        <div className="text-sm text-gray-600">تم الشحن</div>
+                    <div className="snap-start min-w-[130px] flex-1 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm shrink-0">
+                        <div className="text-xl md:text-2xl font-bold text-emerald-600">{stats.delivered}</div>
+                        <div className="text-xs md:text-sm text-slate-500 mt-1">تم التوصيل</div>
                     </div>
-                    <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-                        <div className="text-2xl font-bold text-emerald-600">{stats.delivered}</div>
-                        <div className="text-sm text-gray-600">تم التوصيل</div>
-                    </div>
-                    <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-                        <div className="text-2xl font-bold text-gray-900">
-                            {stats.totalSpent.toFixed(2)} ج.م
+                    <div className="snap-start min-w-[140px] flex-1 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm shrink-0">
+                        <div className="text-lg md:text-xl font-bold text-slate-900 truncate">
+                            {stats.totalSpent.toFixed(0)} <span className="text-xs">ج.م</span>
                         </div>
-                        <div className="text-sm text-gray-600">إجمالي المشتريات</div>
+                        <div className="text-xs md:text-sm text-slate-500 mt-1">المشتريات</div>
                     </div>
                 </div>
             </div>
 
-            <div className="container mx-auto px-4 py-8">
-                {/* Filters and Tabs */}
-                <div className="mb-8">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-                        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full md:w-auto">
-                            <TabsList className="grid grid-cols-6 md:w-fit">
-                                <TabsTrigger value="all" className="gap-2">
-                                    <Filter className="w-4 h-4" />
-                                    الكل
-                                </TabsTrigger>
-                                <TabsTrigger value="pending" className="gap-2">
-                                    <Clock className="w-4 h-4" />
-                                    في الانتظار
-                                </TabsTrigger>
-                                <TabsTrigger value="processing" className="gap-2">
-                                    <Package className="w-4 h-4" />
-                                    قيد التجهيز
-                                </TabsTrigger>
-                                <TabsTrigger value="shipped" className="gap-2">
-                                    <Truck className="w-4 h-4" />
-                                    تم الشحن
-                                </TabsTrigger>
-                                <TabsTrigger value="delivered" className="gap-2">
-                                    <CheckCircle className="w-4 h-4" />
-                                    تم التسليم
-                                </TabsTrigger>
-                                <TabsTrigger value="cancelled" className="gap-2">
-                                    <XCircle className="w-4 h-4" />
-                                    ملغية
-                                </TabsTrigger>
-                            </TabsList>
-                        </Tabs>
+            <div className="container mx-auto px-4 py-2">
+                {/* Scrollable Mobile Tabs & Filters */}
+                <div className="mb-6 flex flex-col md:flex-row justify-between gap-4">
+                    <div className="flex overflow-x-auto hide-scrollbar gap-2 pb-2 -mx-4 px-4 md:mx-0 md:px-0">
+                        {filters.map((filter) => {
+                            const Icon = filter.icon;
+                            const isActive = activeTab === filter.id;
+                            return (
+                                <Button
+                                    key={filter.id}
+                                    variant={isActive ? "default" : "outline"}
+                                    onClick={() => setActiveTab(filter.id)}
+                                    className={`rounded-full shrink-0 gap-1.5 transition-all ${isActive ? 'shadow-md shadow-primary/20' : 'bg-white text-slate-600'
+                                        }`}
+                                >
+                                    <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
+                                    {filter.label}
+                                </Button>
+                            )
+                        })}
+                    </div>
 
-                        <div className="flex items-center gap-3">
-                            <Select value={sortBy} onValueChange={setSortBy}>
-                                <SelectTrigger className="w-[180px]">
-                                    <Calendar className="w-4 h-4 ml-2" />
+                    <div className="w-full md:w-auto">
+                        <Select value={sortBy} onValueChange={setSortBy}>
+                            <SelectTrigger className="w-full md:w-[180px] bg-white rounded-xl border-slate-200">
+                                <div className="flex items-center gap-2">
+                                    <Calendar className="w-4 h-4 text-slate-400" />
                                     <SelectValue placeholder="ترتيب حسب" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="newest">الأحدث أولاً</SelectItem>
-                                    <SelectItem value="oldest">الأقدم أولاً</SelectItem>
-                                    <SelectItem value="highest">الأعلى سعراً</SelectItem>
-                                    <SelectItem value="lowest">الأقل سعراً</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
+                                </div>
+                            </SelectTrigger>
+                            <SelectContent className="rounded-xl">
+                                <SelectItem value="newest">الأحدث أولاً</SelectItem>
+                                <SelectItem value="oldest">الأقدم أولاً</SelectItem>
+                                <SelectItem value="highest">الأعلى سعراً</SelectItem>
+                                <SelectItem value="lowest">الأقل سعراً</SelectItem>
+                            </SelectContent>
+                        </Select>
                     </div>
                 </div>
 
                 {/* Orders Grid */}
-                <div className="space-y-6">
+                <div className="space-y-4 md:space-y-6">
                     {filteredOrders.map((order) => {
                         const statusConfig = getStatusConfig(order.deliveryStatus);
                         const StatusIcon = statusConfig.icon;
@@ -537,304 +497,249 @@ export default function OrdersPage() {
                         const isExpanded = expandedOrder === order._id;
 
                         return (
-                            <Card key={order._id} className={`overflow-hidden border-2 transition-all hover:border-primary/30 ${statusConfig.borderColor}`}>
-                                <CardHeader className="pb-4">
-                                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                                        <div className="flex items-start gap-4">
-                                            <div className={`p-3 rounded-xl ${statusConfig.bgColor}`}>
-                                                <StatusIcon className={`w-6 h-6 ${statusConfig.textColor}`} />
+                            <Card key={order._id} className={`overflow-hidden border transition-all duration-300 hover:shadow-lg rounded-2xl ${statusConfig.borderColor} bg-white`}>
+                                <CardHeader className="p-4 md:p-6 pb-2 md:pb-4 border-b border-slate-50 bg-slate-50/30">
+                                    <div className="flex flex-row items-start justify-between gap-2 md:gap-4">
+                                        <div className="flex items-start gap-3 md:gap-4">
+                                            <div className={`p-2.5 md:p-3 rounded-2xl shrink-0 ${statusConfig.bgColor}`}>
+                                                <StatusIcon className={`w-5 h-5 md:w-6 md:h-6 ${statusConfig.textColor}`} />
                                             </div>
-                                            <div>
-                                                <CardTitle className="text-lg mb-1">
+                                            <div className="flex flex-col gap-1">
+                                                <CardTitle className="text-base md:text-lg text-slate-900 leading-none">
                                                     طلب #{order.orderNumber || order._id.slice(-8).toUpperCase()}
                                                 </CardTitle>
-                                                <CardDescription className="flex flex-wrap items-center gap-3">
-                                                    <span className="flex items-center gap-1">
-                                                        <Calendar className="w-4 h-4" />
-                                                        {format(new Date(order.createdAt), 'dd MMMM yyyy', { locale: ar })}
+                                                <div className="flex flex-wrap items-center gap-2 mt-1 md:mt-2">
+                                                    <span className="flex items-center gap-1 text-xs md:text-sm text-slate-500">
+                                                        <Calendar className="w-3.5 h-3.5" />
+                                                        {format(new Date(order.createdAt), 'dd MMM yyyy', { locale: ar })}
                                                     </span>
-                                                    <span className="flex items-center gap-1">
-                                                        <Package className="w-4 h-4" />
+                                                    <span className="hidden sm:inline text-slate-300">•</span>
+                                                    <span className="flex items-center gap-1 text-xs md:text-sm text-slate-500">
+                                                        <Package className="w-3.5 h-3.5" />
                                                         {itemCount} منتج
                                                     </span>
-                                                    <Badge variant="outline" className={paymentConfig.color}>
-                                                        {paymentConfig.text}
-                                                    </Badge>
-                                                </CardDescription>
+                                                </div>
                                             </div>
                                         </div>
 
-                                        <div className="flex items-center gap-3">
+                                        <div className="flex flex-col items-end gap-2">
                                             <div className="text-right">
-                                                <div className="text-2xl font-bold text-gray-900">
-                                                    {order.total.toFixed(2)} ج.م
+                                                <div className="text-lg md:text-xl font-bold text-slate-900">
+                                                    {order.total.toFixed(0)} <span className="text-xs md:text-sm text-slate-500 font-normal">ج.م</span>
                                                 </div>
-                                                {order.subtotal && (
-                                                    <div className="text-sm text-gray-500 line-through">
-                                                        {order.subtotal.toFixed(2)} ج.م
-                                                    </div>
-                                                )}
                                             </div>
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger asChild>
-                                                    <Button variant="ghost" size="icon">
-                                                        <MoreVertical className="w-5 h-5" />
-                                                    </Button>
-                                                </DropdownMenuTrigger>
-                                                <DropdownMenuContent align="end">
-                                                    <DropdownMenuLabel>خيارات الطلب</DropdownMenuLabel>
-                                                    <DropdownMenuSeparator />
-                                                    <DropdownMenuItem onClick={() => router.push(`/orders/${order._id}`)}>
-                                                        <ExternalLink className="w-4 h-4 ml-2" />
-                                                        عرض التفاصيل
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem>
-                                                        <Download className="w-4 h-4 ml-2" />
-                                                        تحميل الفاتورة
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem>
-                                                        <Headset className="w-4 h-4 ml-2" />
-                                                        مساعدة
-                                                    </DropdownMenuItem>
-                                                    {order.deliveryStatus === 'delivered' && (
-                                                        <DropdownMenuItem>
-                                                            <Star className="w-4 h-4 ml-2" />
-                                                            تقييم المنتجات
-                                                        </DropdownMenuItem>
-                                                    )}
-                                                </DropdownMenuContent>
-                                            </DropdownMenu>
+                                            <Badge variant="secondary" className={`${paymentConfig.color} border-0 rounded-lg text-[10px] md:text-xs px-2 py-0.5`}>
+                                                {paymentConfig.text}
+                                            </Badge>
                                         </div>
                                     </div>
                                 </CardHeader>
 
-                                <CardContent className="pb-4">
+                                <CardContent className="p-4 md:p-6">
                                     {/* Progress Bar */}
-                                    <div className="mb-6">
-                                        <div className="flex items-center justify-between mb-2">
+                                    <div className="mb-6 bg-slate-50/50 p-4 rounded-2xl border border-slate-100">
+                                        <div className="flex items-center justify-between mb-3">
                                             <div className="flex items-center gap-2">
-                                                <StatusIcon className={`w-4 h-4 ${statusConfig.textColor}`} />
-                                                <span className={`font-medium ${statusConfig.textColor}`}>
+                                                <span className={`font-bold text-sm md:text-base ${statusConfig.textColor}`}>
                                                     {statusConfig.text}
                                                 </span>
                                             </div>
-                                            <span className="text-sm text-gray-500">{statusConfig.description}</span>
+                                            <span className="text-xs md:text-sm text-slate-500">{statusConfig.description}</span>
                                         </div>
-                                        <Progress value={getDeliveryProgress(order.deliveryStatus)} className="h-2" />
-                                        <div className="flex justify-between text-xs text-gray-500 mt-2">
+                                        <Progress value={getDeliveryProgress(order.deliveryStatus)} className="h-1.5 md:h-2 rounded-full" />
+                                        <div className="flex justify-between text-[10px] md:text-xs text-slate-400 mt-2 font-medium px-1">
                                             <span>تم التوصيل</span>
-                                            <span>تم الشحن</span>
-                                            <span>قيد المعالجة</span>
+                                            <span className="hidden sm:inline">تم الشحن</span>
+                                            <span className="hidden sm:inline">قيد المعالجة</span>
                                             <span>تم الطلب</span>
-
                                         </div>
                                     </div>
 
-                                    {/* Products Preview */}
+                                    {/* Products Preview (Scrollable horizontally on mobile) */}
                                     <div className="mb-6">
-                                        <div className="flex items-center justify-between mb-4">
-                                            <h3 className="font-semibold text-gray-900">المنتجات</h3>
+                                        <div className="flex items-center justify-between mb-3">
+                                            <h3 className="text-sm font-bold text-slate-900">المنتجات</h3>
                                             <Button
                                                 variant="ghost"
                                                 size="sm"
                                                 onClick={() => setExpandedOrder(isExpanded ? null : order._id)}
-                                                className="text-primary gap-1"
+                                                className="text-primary text-xs h-8 px-2"
                                             >
-                                                {isExpanded ? 'إظهار أقل' : 'إظهار المزيد'}
-                                                <ChevronRight className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
+                                                {isExpanded ? 'إظهار أقل' : 'عرض الكل'}
+                                                <ChevronRight className={`w-3.5 h-3.5 ml-1 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
                                             </Button>
                                         </div>
-                                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+
+                                        <div className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 transition-all ${!isExpanded && order.items.length > 2 ? 'overflow-x-auto hide-scrollbar flex snap-x pb-2' : ''}`}>
                                             {order.items.slice(0, isExpanded ? order.items.length : 5).map((item) => (
                                                 <div
                                                     key={item._id}
-                                                    className="group relative bg-gray-50 rounded-xl p-3 hover:bg-gray-100 transition-colors"
+                                                    className={`group relative bg-white border border-slate-100 rounded-2xl p-2.5 hover:shadow-md transition-all ${!isExpanded && order.items.length > 2 ? 'min-w-[140px] snap-start shrink-0' : ''}`}
                                                 >
-                                                    <div
-                                                        className="cursor-pointer"
-                                                        onClick={() => router.push(`/products/${item.product._id}`)}
-                                                    >
-                                                        <div className="aspect-square rounded-lg overflow-hidden bg-white mb-2">
+                                                    <div className="cursor-pointer" onClick={() => router.push(`/products/${item.product._id}`)}>
+                                                        <div className="aspect-square rounded-xl overflow-hidden bg-slate-50 mb-2.5 relative">
                                                             <img
                                                                 src={item.product?.images?.[0] || '/placeholder-product.jpg'}
                                                                 alt={item.product?.title}
-                                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                                             />
                                                         </div>
                                                         <div>
-                                                            <p className="text-sm font-medium text-gray-900 truncate">
+                                                            <p className="text-xs font-semibold text-slate-800 line-clamp-1">
                                                                 {item.product?.title}
                                                             </p>
-                                                            <p className="text-xs text-gray-500 mt-1">
-                                                                الكمية: {item.quantity}
-                                                            </p>
-                                                            <p className="text-sm font-semibold text-primary mt-1">
-                                                                {(item.price * item.quantity).toFixed(2)} ج.م
-                                                            </p>
+                                                            <div className="flex justify-between items-center mt-1.5">
+                                                                <p className="text-[11px] text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded-md">
+                                                                    الكمية: {item.quantity}
+                                                                </p>
+                                                                <p className="text-xs font-bold text-primary">
+                                                                    {(item.price * item.quantity).toFixed(0)} <span className="text-[9px]">ج.م</span>
+                                                                </p>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                     {order.deliveryStatus === 'delivered' && isWithinReturnWindow(order) && (
                                                         <Button
                                                             variant="outline"
                                                             size="sm"
-                                                            className="w-full mt-2 text-xs gap-1"
+                                                            className="w-full mt-2.5 text-[10px] h-7 rounded-lg"
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
                                                                 router.push(`/returns/new?orderId=${order._id}&itemId=${item._id}`);
                                                             }}
                                                         >
-                                                            <Repeat className="w-3 h-3" />
-                                                            طلب إرجاع
+                                                            <Repeat className="w-3 h-3 ml-1" />
+                                                            إرجاع
                                                         </Button>
                                                     )}
                                                 </div>
                                             ))}
                                             {!isExpanded && order.items.length > 5 && (
-                                                <div className="relative bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl p-3 flex items-center justify-center">
+                                                <div className="min-w-[140px] snap-start shrink-0 relative bg-slate-50 border border-slate-100 rounded-2xl p-3 flex items-center justify-center cursor-pointer hover:bg-slate-100 transition-colors" onClick={() => setExpandedOrder(order._id)}>
                                                     <div className="text-center">
-                                                        <div className="text-2xl font-bold text-gray-700 mb-1">
+                                                        <div className="text-2xl font-black text-slate-400 mb-1">
                                                             +{order.items.length - 5}
                                                         </div>
-                                                        <div className="text-xs text-gray-600">منتجات أخرى</div>
+                                                        <div className="text-[11px] font-medium text-slate-500">عرض الباقي</div>
                                                     </div>
                                                 </div>
                                             )}
                                         </div>
                                     </div>
 
-                                    {/* Order Info */}
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                        <div className="bg-gray-50 rounded-xl p-4">
-                                            <div className="flex items-center gap-2 mb-3">
-                                                <MapPin className="w-4 h-4 text-gray-500" />
-                                                <h4 className="font-medium text-gray-900">عنوان التوصيل</h4>
+                                    {/* Order Details Grid */}
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+                                        <div className="bg-white border border-slate-100 shadow-sm rounded-2xl p-4">
+                                            <div className="flex items-center gap-2 mb-2">
+                                                <div className="p-1.5 bg-slate-50 rounded-lg"><MapPin className="w-4 h-4 text-slate-500" /></div>
+                                                <h4 className="text-sm font-bold text-slate-900">عنوان التوصيل</h4>
                                             </div>
-                                            <p className="text-sm text-gray-600">
+                                            <p className="text-xs text-slate-600 leading-relaxed pl-8">
                                                 {order.deliveryAddress || 'لم يتم تحديد عنوان'}
                                             </p>
-                                            {order.recipientInfo && (
-                                                <div className="mt-3 space-y-1 text-sm">
-                                                    <div className="flex items-center gap-2">
-                                                        <User className="w-4 h-4 text-gray-400" />
-                                                        <span>{order.recipientInfo.fullName}</span>
-                                                    </div>
-                                                    <div className="flex items-center gap-2">
-                                                        <Phone className="w-4 h-4 text-gray-400" />
-                                                        <span>{order.recipientInfo.phoneNumber}</span>
-                                                    </div>
-                                                </div>
-                                            )}
                                         </div>
 
-                                        <div className="bg-gray-50 rounded-xl p-4">
-                                            <div className="flex items-center gap-2 mb-3">
-                                                <Truck className="w-4 h-4 text-gray-500" />
-                                                <h4 className="font-medium text-gray-900">معلومات التوصيل</h4>
+                                        <div className="bg-white border border-slate-100 shadow-sm rounded-2xl p-4">
+                                            <div className="flex items-center gap-2 mb-2">
+                                                <div className="p-1.5 bg-slate-50 rounded-lg"><Truck className="w-4 h-4 text-slate-500" /></div>
+                                                <h4 className="text-sm font-bold text-slate-900">حالة الشحن</h4>
                                             </div>
-                                            <div className="space-y-2 text-sm">
+                                            <div className="space-y-1.5 text-xs pl-8">
                                                 <div className="flex justify-between">
-                                                    <span className="text-gray-600">طريقة التوصيل:</span>
-                                                    <span className="font-medium">{order.deliveryMethod || 'توصيل منزلي'}</span>
+                                                    <span className="text-slate-500">الطريقة:</span>
+                                                    <span className="font-medium text-slate-800">{order.deliveryMethod || 'توصيل منزلي'}</span>
                                                 </div>
                                                 {order.trackingNumber && (
                                                     <div className="flex justify-between">
-                                                        <span className="text-gray-600">رقم التتبع:</span>
-                                                        <span className="font-medium text-primary">{order.trackingNumber}</span>
-                                                    </div>
-                                                )}
-                                                {order.updatedAt && (
-                                                    <div className="flex justify-between">
-                                                        <span className="text-gray-600">آخر تحديث:</span>
-                                                        <span className="font-medium">
-                                                            {format(new Date(order.updatedAt), 'dd/MM/yyyy')}
-                                                        </span>
+                                                        <span className="text-slate-500">التتبع:</span>
+                                                        <span className="font-bold text-primary">{order.trackingNumber}</span>
                                                     </div>
                                                 )}
                                             </div>
                                         </div>
 
-                                        <div className="bg-gray-50 rounded-xl p-4">
-                                            <div className="flex items-center gap-2 mb-3">
-                                                <CreditCard className="w-4 h-4 text-gray-500" />
-                                                <h4 className="font-medium text-gray-900">ملخص الطلب</h4>
+                                        <div className="bg-white border border-slate-100 shadow-sm rounded-2xl p-4 sm:col-span-2 lg:col-span-1">
+                                            <div className="flex items-center gap-2 mb-2">
+                                                <div className="p-1.5 bg-slate-50 rounded-lg"><CreditCard className="w-4 h-4 text-slate-500" /></div>
+                                                <h4 className="text-sm font-bold text-slate-900">ملخص الدفع</h4>
                                             </div>
-                                            <div className="space-y-2 text-sm">
+                                            <div className="space-y-1.5 text-xs pl-8">
                                                 <div className="flex justify-between">
-                                                    <span className="text-gray-600">المجموع:</span>
-                                                    <span>{order.subtotal?.toFixed(2) || order.total.toFixed(2)} ج.م</span>
+                                                    <span className="text-slate-500">المجموع:</span>
+                                                    <span className="font-medium">{order.subtotal?.toFixed(0) || order.total.toFixed(0)} ج.م</span>
                                                 </div>
-                                                {order.shippingFee && (
+                                                {order.shippingFee ? (
                                                     <div className="flex justify-between">
-                                                        <span className="text-gray-600">الشحن:</span>
-                                                        <span>{order.shippingFee.toFixed(2)} ج.م</span>
+                                                        <span className="text-slate-500">الشحن:</span>
+                                                        <span className="font-medium">{order.shippingFee.toFixed(0)} ج.م</span>
                                                     </div>
-                                                )}
-                                                {order.discount && (
-                                                    <div className="flex justify-between text-emerald-600">
-                                                        <span>الخصم:</span>
-                                                        <span>-{order.discount.toFixed(2)} ج.م</span>
-                                                    </div>
-                                                )}
-                                                <div className="flex justify-between font-bold text-lg pt-2 border-t">
-                                                    <span>الإجمالي:</span>
-                                                    <span className="text-primary">{order.total.toFixed(2)} ج.م</span>
+                                                ) : null}
+                                                <div className="flex justify-between font-bold text-sm pt-2 border-t border-slate-100 mt-1">
+                                                    <span className="text-slate-900">الإجمالي:</span>
+                                                    <span className="text-primary">{order.total.toFixed(0)} ج.م</span>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </CardContent>
 
-                                <CardFooter className="bg-gray-50 border-t pt-4">
-                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 w-full">
-                                        <div className="flex flex-wrap gap-2">
+                                <CardFooter className="bg-slate-50/50 border-t border-slate-100 p-4">
+                                    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 w-full">
+
+                                        {/* Actions for Mobile: Full width buttons. For Desktop: inline */}
+                                        <div className="grid grid-cols-2 sm:flex flex-wrap gap-2 w-full sm:w-auto">
                                             <Button
                                                 variant="outline"
                                                 size="sm"
                                                 onClick={() => router.push(`/orders/${order._id}`)}
-                                                className="gap-2"
+                                                className="w-full sm:w-auto rounded-xl text-xs h-9 bg-white"
                                             >
-                                                <ExternalLink className="w-4 h-4" />
-                                                عرض التفاصيل الكاملة
-                                            </Button>
-                                            {order.deliveryStatus === 'delivered' && (
-                                                <Button variant="outline" size="sm" className="gap-2">
-                                                    <Star className="w-4 h-4" />
-                                                    تقييم الطلب
-                                                </Button>
-                                            )}
-                                        
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
-                                                className="gap-2"
-                                                onClick={() => router.push('/contact')}
-                                            >
-                                                <Headset className="w-4 h-4" />
-                                                طلب المساعدة
+                                                التفاصيل
                                             </Button>
 
+                                            {order.deliveryStatus === 'delivered' && (
+                                                <Button variant="outline" size="sm" className="w-full sm:w-auto rounded-xl text-xs h-9 bg-white">
+                                                    <Star className="w-3.5 h-3.5 ml-1.5 text-amber-500" />
+                                                    تقييم
+                                                </Button>
+                                            )}
+
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="w-full sm:w-auto rounded-xl text-xs h-9 col-span-2 sm:col-span-1 text-slate-500 hover:text-slate-900"
+                                                onClick={() => router.push('/contact')}
+                                            >
+                                                <Headset className="w-3.5 h-3.5 ml-1.5" />
+                                                مساعدة
+                                            </Button>
                                         </div>
+
                                         {order.paymentStatus === 'pending' && (
                                             <DropdownMenu>
                                                 <DropdownMenuTrigger asChild>
                                                     <Button
                                                         size="sm"
-                                                        className="gap-2"
+                                                        className="w-full sm:w-auto rounded-xl shadow-md shadow-primary/20"
                                                         disabled={processingPayment === order._id}
                                                     >
                                                         {processingPayment === order._id ? (
-                                                            <Loader2 className="w-4 h-4 animate-spin" />
+                                                            <Loader2 className="w-4 h-4 animate-spin ml-2" />
                                                         ) : (
-                                                            <CreditCard className="w-4 h-4" />
+                                                            <CreditCard className="w-4 h-4 ml-2" />
                                                         )}
-                                                        {processingPayment === order._id ? 'جاري التحويل...' : 'إتمام الدفع'}
+                                                        {processingPayment === order._id ? 'جاري...' : 'الدفع الآن'}
                                                     </Button>
                                                 </DropdownMenuTrigger>
-                                                <DropdownMenuContent align="end">
-                                                    <DropdownMenuItem onClick={() => handleCompletePayment(order._id, 'card')}>
+                                                <DropdownMenuContent align="end" className="rounded-2xl p-2 min-w-[200px]">
+                                                    <DropdownMenuLabel className="text-xs text-slate-500">اختر طريقة الدفع</DropdownMenuLabel>
+                                                    <DropdownMenuSeparator />
+                                                    <DropdownMenuItem className="rounded-xl cursor-pointer py-2.5" onClick={() => handleCompletePayment(order._id, 'card')}>
+                                                        <CreditCard className="w-4 h-4 ml-2 text-primary" />
                                                         بطاقة بنكية (Card)
                                                     </DropdownMenuItem>
-                                                    <DropdownMenuItem onClick={() => handleCompletePayment(order._id, 'wallet')}>
+                                                    <DropdownMenuItem className="rounded-xl cursor-pointer py-2.5" onClick={() => handleCompletePayment(order._id, 'wallet')}>
+                                                        <Shield className="w-4 h-4 ml-2 text-indigo-500" />
                                                         محفظة إلكترونية (Wallet)
                                                     </DropdownMenuItem>
                                                 </DropdownMenuContent>
@@ -847,43 +752,42 @@ export default function OrdersPage() {
                     })}
                 </div>
 
-                {/* Empty State */}
+                {/* Empty State for Filters */}
                 {filteredOrders.length === 0 && activeTab !== 'all' && (
-                    <div className="text-center py-16">
-                        <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center">
-                            <Package className="w-12 h-12 text-gray-400" />
+                    <div className="text-center py-20 px-4">
+                        <div className="w-20 h-20 mx-auto mb-5 bg-slate-100 rounded-full flex items-center justify-center">
+                            <Filter className="w-8 h-8 text-slate-400" />
                         </div>
-                        <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                        <h3 className="text-lg font-bold text-slate-900 mb-2">
                             لا توجد طلبات في هذه الفئة
                         </h3>
-                        <p className="text-gray-600 mb-6">
-                            لا يوجد لديك طلبات بحالة "{getStatusConfig(activeTab as any).text}"
+                        <p className="text-sm text-slate-500 mb-6 max-w-sm mx-auto">
+                            لا يوجد لديك طلبات بحالة "{getStatusConfig(activeTab as any).text}" حالياً.
                         </p>
                         <Button
                             onClick={() => setActiveTab('all')}
                             variant="outline"
-                            className="gap-2"
+                            className="rounded-xl"
                         >
                             عرض جميع الطلبات
-                            <ChevronRight className="w-4 h-4" />
+                            <ChevronRight className="w-4 h-4 mr-2" />
                         </Button>
                     </div>
                 )}
-
-                {/* Pagination / Info */}
-                {filteredOrders.length > 0 && (
-                    <div className="mt-8 pt-6 border-t">
-                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                            <div className="text-sm text-gray-600">
-                                عرض <span className="font-semibold">{filteredOrders.length}</span> من أصل <span className="font-semibold">{orders.length}</span> طلب
-                            </div>
-                            <div className="text-sm text-gray-600">
-                                <span className="font-semibold">نصيحة:</span> يمكنك الضغط على أي منتج لعرض تفاصيله
-                            </div>
-                        </div>
-                    </div>
-                )}
             </div>
+
+            {/* Custom Styles to hide scrollbar but keep functionality */}
+            <style dangerouslySetInnerHTML={{
+                __html: `
+                .hide-scrollbar::-webkit-scrollbar {
+                    display: none;
+                }
+                .hide-scrollbar {
+                    -ms-overflow-style: none;
+                    scrollbar-width: none;
+                }
+                `
+            }} />
         </div>
     );
 }

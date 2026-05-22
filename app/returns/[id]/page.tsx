@@ -9,44 +9,52 @@ import { MirvoryPageLoader } from '@/components/MirvoryLoader';
 
 interface ReturnRequest {
     _id: string;
-    user: string;
-    username: string;
-    email: string;
-    phone: string;
+
+    user: {
+        _id: string;
+        firstName: string;
+        lastName: string;
+        email: string;
+    };
+
     order: {
         _id: string;
         orderNumber: string;
         totalPrice: number;
     };
+
     product: {
         _id: string;
         name: string;
         image: string;
         price: number;
     };
+
     seller: {
         _id: string;
-        name: string;
+        firstName: string;
+        lastName: string;
         email: string;
     };
-    reason: string;
+
     item: string;
-    quantity: number;
-    status: 'pending' | 'approved' | 'processing' | 'ready_for_pickup' | 'received' | 'rejected' | 'finished';
+
+    reason: string;
+
+    images: string[];
+
+    status: 'pending' | 'approved' | 'rejected' | 'processing' | 'processed';
+
+    refundAmount: number;
+    refundStatus: string;
+
     deleteAt?: string;
+
     createdAt: string;
     updatedAt: string;
-    additionalNotes?: string;
-    refundAmount?: number;
-    refundMethod?: string;
-}
 
-interface StatusHistory {
-    status: string;
-    date: string;
-    note?: string;
+    rejectionReason?: string;
 }
-
 export default function ReturnDetailsPage() {
     const [returnRequest, setReturnRequest] = useState<ReturnRequest | null>(null);
     const [loading, setLoading] = useState(true);
@@ -64,13 +72,13 @@ export default function ReturnDetailsPage() {
                 }
 
                 const response = await returnService.getReturnRequestById(id as string);
-
+                console.log(response, 'kllll')
                 if (response?.data) {
                     setReturnRequest(response.data);
                     generateStatusHistory(response.data);
                 } else {
                     toast.error('لم يتم العثور على طلب الإرجاع');
-                    router.push('/returns');
+                    // router.push('/returns');
                 }
             } catch (error) {
                 console.error('Error fetching return details:', error);
@@ -270,7 +278,7 @@ export default function ReturnDetailsPage() {
                     <p className="text-gray-600 mt-2">رقم الطلب: #{returnRequest._id.slice(-8).toUpperCase()}</p>
                 </div>
                 <div className="flex gap-3 mt-4 lg:mt-0">
-                    <button
+                    {/* <button
                         onClick={handlePrint}
                         className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors flex items-center gap-2"
                     >
@@ -278,7 +286,7 @@ export default function ReturnDetailsPage() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
                         </svg>
                         طباعة
-                    </button>
+                    </button> */}
                     <button
                         onClick={handleContactSupport}
                         className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors flex items-center gap-2"
@@ -345,7 +353,7 @@ export default function ReturnDetailsPage() {
                                 <div className="grid sm:grid-cols-2 gap-4 text-sm">
                                     <div>
                                         <span className="font-medium text-gray-700">سعر المنتج:</span>
-                                        <p className="text-gray-600">{returnRequest.product.price} ر.س</p>
+                                        <p className="text-gray-600">{returnRequest.product.price} ج.م</p>
                                     </div>
                                     <div>
                                         <span className="font-medium text-gray-700">الكمية:</span>
@@ -390,9 +398,12 @@ export default function ReturnDetailsPage() {
                         <div className="space-y-3">
                             <div>
                                 <span className="font-medium text-gray-700">رقم الطلب الأصلي:</span>
-                                <p className="text-gray-600">#{(typeof returnRequest.order === 'string' ? returnRequest.order : (returnRequest.order._id ?? ''))?.slice(-6).toUpperCase()}</p>
+                                <p className="text-gray-600">#{returnRequest.order?.orderNumber}</p>
+                                <p className="text-gray-600">
+                                    {returnRequest.order?.totalPrice} ج.م
+                                </p>
                             </div>
-                           
+
                             <div>
                                 <span className="font-medium text-gray-700">تاريخ الطلب:</span>
                                 <p className="text-gray-600">{format(new Date(returnRequest.createdAt), 'yyyy/MM/dd')}</p>
@@ -420,7 +431,7 @@ export default function ReturnDetailsPage() {
                   
                     </div> */}
 
-{/* 
+                    {/* 
                     Seller Information
                     <div className="bg-white border border-gray-200 rounded-lg p-6">
                         <h2 className="text-xl font-semibold text-gray-900 mb-4">معلومات البائع</h2>
@@ -448,7 +459,7 @@ export default function ReturnDetailsPage() {
                                 {returnRequest.refundAmount && (
                                     <div>
                                         <span className="font-medium text-gray-700">المبلغ المسترد:</span>
-                                        <p className="text-green-600 font-semibold">{returnRequest.refundAmount} ر.س</p>
+                                        <p className="text-green-600 font-semibold">{returnRequest.refundAmount} ج.م</p>
                                     </div>
                                 )}
                                 {returnRequest.refundMethod && (
@@ -472,7 +483,7 @@ export default function ReturnDetailsPage() {
                         <h2 className="text-xl font-semibold text-gray-900 mb-4">إجراءات سريعة</h2>
                         <div className="space-y-3">
                             <button
-                                onClick={handleContactSupport}
+                                onClick={() => router.push('/contact')}
                                 className="w-full px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
                             >
                                 الاتصال بالدعم

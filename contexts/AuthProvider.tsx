@@ -234,7 +234,8 @@ function AuthContextWrapper({
             try {
                 const res = await authService.getCurrentUser();
                 console.log(res,'getCurrentUser')
-                const fetchedUser = normalizeUserPayload(res.data?.data);
+                const fetchedUser = normalizeUserPayload(res?.data);
+                console.log(fetchedUser, 'getCurrentUser1')
 
                 hasFetchedRef.current = true;
 
@@ -272,10 +273,15 @@ function AuthContextWrapper({
         let mounted = true;
 
         const initializeAuth = async () => {
-            // Priority 1: Server user
+            // Priority 1: Server user with JWT token - fetch full details
             if (normalizedInitialUser) {
-                hasFetchedRef.current = true;
-                setUser(normalizedInitialUser);
+                // If it's a JWT token, fetch full user details from backend
+                if (normalizedInitialUser._isJwtToken) {
+                    await refreshUser();
+                } else {
+                    hasFetchedRef.current = true;
+                    setUser(normalizedInitialUser);
+                }
 
                 if (mounted) {
                     setCookiesReady(true);
@@ -315,7 +321,7 @@ function AuthContextWrapper({
                 return;
             }
 
-            // Priority 3: API fetch
+            // Priority 3: API fetch - always fetch full user details
             if (!hasFetchedRef.current) {
                 await refreshUser();
             }

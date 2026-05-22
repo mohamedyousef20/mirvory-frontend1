@@ -165,7 +165,7 @@ export function NotificationsPage() {
           <TabsTrigger value="all">{language === 'ar' ? 'الكل' : 'All'}</TabsTrigger>
           <TabsTrigger value="unread">{language === 'ar' ? 'غير مقروءة' : 'Unread'}</TabsTrigger>
           <TabsTrigger value="order">{language === 'ar' ? 'الطلبات' : 'Orders'}</TabsTrigger>
-          <TabsTrigger value="promo">{language === 'ar' ? 'العروض' : 'Promos'}</TabsTrigger>
+          {/* <TabsTrigger value="promo">{language === 'ar' ? 'العروض' : 'Promos'}</TabsTrigger> */}
           <TabsTrigger value="system">{language === 'ar' ? 'النظام' : 'System'}</TabsTrigger>
         </TabsList>
 

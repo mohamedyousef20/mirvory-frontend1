@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Loader2, RotateCcw, Truck, CheckCircle, XCircle, Clock, ArrowLeft, Package, Home, Store, Eye, EyeOff, Copy, QrCode } from "lucide-react"
 import { format } from "date-fns"
-import { useLanguage } from "@/components/language-provider";
+import { useLanguage } from "@/components/language-provider"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { orderService } from "@/lib/api"
@@ -96,11 +96,9 @@ export default function OrderDetailsPage() {
                 const idStr = Array.isArray(id) ? id[0] : id;
                 if (!idStr) throw new Error('Invalid order id');
                 const response = await orderService.getOrderById(idStr as string);
-                //console.log('API Response:', response);
 
                 if (response?.data) {
                     setOrder(response.data);
-                    //console.log('Order set to state:', response.data);
                 } else {
                     console.error('No data found in response:', response);
                     toast.error('حدث خطأ أثناء جلب تفاصيل الطلب')
@@ -117,7 +115,7 @@ export default function OrderDetailsPage() {
     }, [id, t])
 
     useEffect(() => {
-        //console.log('Order state updated:', order);
+        // Order state updated
     }, [order]);
 
     const getDeliveryStatusInfo = (status: DeliveryStatus) => {
@@ -227,7 +225,7 @@ export default function OrderDetailsPage() {
             <div className="container mx-auto py-12 flex justify-center items-center min-h-[60vh]">
                 <div className="flex flex-col items-center gap-4">
                     <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                    <p className="text-muted-foreground">جاري تحميل تفاصيل الطلب...</p>
+                    <p className="text-muted-foreground text-sm sm:text-base">جاري تحميل تفاصيل الطلب...</p>
                 </div>
             </div>
         )
@@ -235,10 +233,10 @@ export default function OrderDetailsPage() {
 
     if (!order) {
         return (
-            <div className="container mx-auto py-12 text-center">
-                <h2 className="text-2xl font-bold mb-4">الطلب غير موجود</h2>
-                <p className="text-muted-foreground mb-6">عذراً، لا يمكن العثور على تفاصيل الطلب المطلوبة</p>
-                <Button onClick={() => router.push('/profile/orders')}>
+            <div className="container mx-auto py-12 px-4 text-center">
+                <h2 className="text-xl sm:text-2xl font-bold mb-4">الطلب غير موجود</h2>
+                <p className="text-muted-foreground mb-6 text-sm sm:text-base">عذراً، لا يمكن العثور على تفاصيل الطلب المطلوبة</p>
+                <Button className="w-full sm:w-auto" onClick={() => router.push('/profile/orders')}>
                     العودة إلى طلباتي
                 </Button>
             </div>
@@ -251,168 +249,176 @@ export default function OrderDetailsPage() {
     const qrPayload = JSON.stringify({ orderId: order._id, secretCode: order.secretCode })
 
     return (
-        <div className="container mx-auto py-8 px-4">
-            <div className="flex items-center gap-2 mb-6">
-                <Button variant="ghost" size="icon" onClick={() => router.back()}>
-                    <ArrowLeft className="h-5 w-5" />
-                </Button>
-                <h1 className="text-2xl font-bold flex items-center gap-2">
-                    تفاصيل الطلب رقم  #{order._id.slice(0, 8)}
-
-                    <button
-                        onClick={() => navigator.clipboard.writeText(order._id)}
-                        className="text-sm bg-gray-200 hover:bg-gray-300 px-2 py-1 rounded-md"
-                    >
-                        <Copy />
-                    </button>
-                </h1>
+        <div className="container mx-auto py-4 sm:py-8 px-3 sm:px-4">
+            {/* Header Section */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
+                <div className="flex items-center gap-2">
+                    <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0" onClick={() => router.back()}>
+                        <ArrowLeft className="h-5 w-5" />
+                    </Button>
+                    <h1 className="text-lg sm:text-2xl font-bold flex items-center flex-wrap gap-2 break-all">
+                        <span>تفاصيل الطلب رقم</span>
+                        <span className="text-primary font-mono">#{order._id.slice(0, 8)}</span>
+                        <Button
+                            size="icon"
+                            variant="secondary"
+                            onClick={() => {
+                                navigator.clipboard.writeText(order._id);
+                                toast.success("تم نسخ رقم الطلب كاملاً")
+                            }}
+                            className="h-7 w-7 rounded-md"
+                            title="نسخ رقم الطلب كاملاً"
+                        >
+                            <Copy className="h-3.5 w-3.5" />
+                        </Button>
+                    </h1>
+                </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Order Summary */}
-                <div className="lg:col-span-2 space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+                {/* Order Summary & Delivery Info Column */}
+                <div className="lg:col-span-2 space-y-4 sm:space-y-6">
+                    {/* Order Summary Card */}
                     <Card>
-                        <CardHeader className="pb-4">
-                            <div className="flex justify-between items-center">
-                                <CardTitle className="text-lg">ملخص الطلب</CardTitle>
-                                <div className="flex items-center gap-2">
-                                    <Badge className={deliveryStatusInfo.color}>
+                        <CardHeader className="p-4 sm:p-6 pb-3 sm:pb-4">
+                            <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+                                <CardTitle className="text-base sm:text-lg">ملخص الطلب</CardTitle>
+                                <div className="flex items-center gap-2 self-start sm:self-auto">
+                                    <Badge className={`${deliveryStatusInfo.color} flex items-center gap-1.5 py-1 px-2.5 text-xs font-medium`}>
                                         {deliveryStatusInfo.icon}
-                                        <span className="mr-1">{deliveryStatusInfo.text}</span>
+                                        <span>{deliveryStatusInfo.text}</span>
                                     </Badge>
                                 </div>
                             </div>
                         </CardHeader>
-                        <CardContent>
+                        <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
                             <div className="space-y-4">
-                                <div className="space-y-4">
+                                <div className="divide-y divide-gray-100">
                                     {order.items.map((item) => (
-                                        <div key={item._id} className="flex gap-4 pb-4 border-b">
-                                            <div className="relative w-20 h-20 bg-gray-100 rounded-md overflow-hidden">
+                                        <div key={item._id} className="flex gap-3 sm:gap-4 py-4 first:pt-0 last:pb-0">
+                                            {/* Product Image */}
+                                            <div className="relative w-16 h-16 sm:w-20 sm:h-20 bg-gray-50 rounded-lg overflow-hidden shrink-0 border border-gray-100">
                                                 <Image
                                                     src={item.product.images?.[0] || '/placeholder-product.jpg'}
                                                     alt={item.product.title}
                                                     fill
                                                     className="object-cover"
+                                                    sizes="(max-width: 640px) 64px, 80px"
                                                 />
                                             </div>
-                                            <div className="flex-1">
-                                                <div className="flex items-start justify-between">
-                                                    <h3 className="font-medium">{item.product.title}</h3>
-                                                    {/* رقم المنتج القابل للنسخ */}
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="text-xs text-muted-foreground">
-                                                            رقم المنتج:
-                                                        </span>
-                                                        <div
-                                                            className="flex items-center gap-1 bg-gray-100 px-2 py-1 rounded text-xs cursor-pointer hover:bg-gray-200 transition-colors"
-                                                            onClick={() => {
-                                                                navigator.clipboard.writeText(item.product._id);
-                                                                toast.success("تم نسخ رقم المنتج")
-                                                            }}
-                                                            title="انقر للنسخ"
-                                                        >
-                                                            <code className="font-mono">
-                                                                #{item.product._id?.substring(0, 8)}...
-                                                            </code>
-                                                            <svg
-                                                                className="h-3 w-3 text-gray-500"
-                                                                fill="none"
-                                                                stroke="currentColor"
-                                                                viewBox="0 0 24 24"
+                                            {/* Product Details */}
+                                            <div className="flex-1 min-w-0 flex flex-col justify-between">
+                                                <div>
+                                                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-1 mb-1">
+                                                        <h3 className="font-medium text-sm sm:text-base text-gray-900 line-clamp-2 leading-tight">
+                                                            {item.product.title}
+                                                        </h3>
+                                                        {/* SKU / Product ID */}
+                                                        <div className="flex items-center gap-1.5 shrink-0 self-start sm:self-auto">
+                                                            <span className="text-[11px] text-muted-foreground whitespace-nowrap">
+                                                                رقم المنتج:
+                                                            </span>
+                                                            <div
+                                                                className="flex items-center gap-1 bg-gray-50 hover:bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded text-[11px] font-mono cursor-pointer transition-colors border border-gray-200/60"
+                                                                onClick={() => {
+                                                                    navigator.clipboard.writeText(item.product._id);
+                                                                    toast.success("تم نسخ رقم المنتج")
+                                                                }}
+                                                                title="انقر للنسخ"
                                                             >
-                                                                <path
-                                                                    strokeLinecap="round"
-                                                                    strokeLinejoin="round"
-                                                                    strokeWidth={2}
-                                                                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                                                                />
-                                                            </svg>
+                                                                <span>#{item.product._id?.substring(0, 6)}...</span>
+                                                                <Copy className="h-2.5 w-2.5 text-gray-400" />
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
 
-                                                <div className="flex flex-wrap gap-2 mt-1">
-                                                    <p className="text-sm text-muted-foreground">
-                                                        الكمية: {item.quantity}
-                                                    </p>
-                                                    {item.color && (
-                                                        <Badge variant="outline" className="text-xs">
-                                                            اللون: {item.color}
-                                                        </Badge>
-                                                    )}
-                                                    {item.size && (
-                                                        <Badge variant="outline" className="text-xs">
-                                                            المقاس: {item.size}
-                                                        </Badge>
-                                                    )}
-                                                    {item.isPrepared && (
-                                                        <Badge className="bg-green-100 text-green-800 text-xs">
-                                                            تم التجهيز
-                                                        </Badge>
-                                                    )}
+                                                    {/* Variant Badges */}
+                                                    <div className="flex flex-wrap gap-1.5 mt-1.5">
+                                                        <span className="text-xs text-muted-foreground bg-gray-50 px-1.5 py-0.5 rounded border border-gray-100">
+                                                            الكمية: {item.quantity}
+                                                        </span>
+                                                        {item.color && (
+                                                            <Badge variant="outline" className="text-[11px] px-1.5 py-0 font-normal">
+                                                                اللون: {item.color}
+                                                            </Badge>
+                                                        )}
+                                                        {item.size && (
+                                                            <Badge variant="outline" className="text-[11px] px-1.5 py-0 font-normal">
+                                                                المقاس: {item.size}
+                                                            </Badge>
+                                                        )}
+                                                        {item.isPrepared && (
+                                                            <Badge className="bg-green-50 text-green-700 border border-green-200 shadow-none text-[11px] px-1.5 py-0 font-medium">
+                                                                تم التجهيز
+                                                            </Badge>
+                                                        )}
+                                                    </div>
                                                 </div>
-                                                <p className="font-medium mt-1">{item.price * item.quantity} ج.م</p>
+                                                <p className="font-semibold text-sm sm:text-base text-gray-900 mt-2">
+                                                    {item.price * item.quantity} ج.م
+                                                </p>
                                             </div>
                                         </div>
                                     ))}
+                                </div>
 
-                                    <div className="pt-4 space-y-2">
-                                        <div className="flex justify-between">
-                                            <span>المجموع الفرعي</span>
-                                            <span>{order.subtotal} ج.م</span>
-                                        </div>
-                                        <div className="flex justify-between text-green-600">
-                                            <span>الخصم</span>
-                                            <span>-{order.discount} ج.م</span>
-                                        </div>
-                                        <div className="flex justify-between">
-                                            <span>الشحن</span>
-                                            <span>{order.shippingFee} ج.م</span>
-                                        </div>
-                                        <Separator className="my-2" />
-                                        <div className="flex justify-between font-bold text-lg">
-                                            <span>الإجمالي</span>
-                                            <span>{order.total} ج.م</span>
-                                        </div>
+                                {/* Financials Breakdown */}
+                                <div className="pt-4 border-t space-y-2.5 text-sm sm:text-base">
+                                    <div className="flex justify-between text-muted-foreground">
+                                        <span>المجموع الفرعي</span>
+                                        <span className="font-medium text-gray-900">{order.subtotal} ج.م</span>
+                                    </div>
+                                    <div className="flex justify-between text-green-600">
+                                        <span>الخصم</span>
+                                        <span className="font-medium">-{order.discount} ج.م</span>
+                                    </div>
+                                    <div className="flex justify-between text-muted-foreground">
+                                        <span>الشحن</span>
+                                        <span className="font-medium text-gray-900">{order.shippingFee} ج.م</span>
+                                    </div>
+                                    <Separator className="my-2" />
+                                    <div className="flex justify-between font-bold text-base sm:text-lg text-gray-950">
+                                        <span>الإجمالي</span>
+                                        <span>{order.total} ج.م</span>
                                     </div>
                                 </div>
                             </div>
                         </CardContent>
                     </Card>
 
+                    {/* Delivery Info Card */}
                     <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
+                        <CardHeader className="p-4 sm:p-6 pb-3 sm:pb-4">
+                            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
                                 {deliveryMethodInfo.icon}
-                                معلومات التوصيل
+                                <span>معلومات التوصيل</span>
                             </CardTitle>
                         </CardHeader>
-                        <CardContent>
+                        <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0 text-sm sm:text-base">
                             <div className="space-y-4">
-                                <div className="flex items-center gap-2 mb-4">
-                                    <Badge variant="outline">
+                                <div className="flex items-center gap-2">
+                                    <Badge variant="outline" className="font-normal text-xs px-2.5 py-0.5">
                                         {deliveryMethodInfo.text}
                                     </Badge>
                                 </div>
 
                                 {order.deliveryMethod === 'home' ? (
-                                    <div className="space-y-2">
-                                        <p className="font-medium">{order.deliveryInfo?.fullName}</p>
-                                        <p>{order.deliveryInfo?.address}</p>
-                                        <p className="pt-2">
-                                            <span className="text-muted-foreground">الهاتف:</span> {order.deliveryInfo?.phoneNumber}
+                                    <div className="space-y-2 text-gray-700 bg-gray-50/50 p-3 sm:p-4 rounded-xl border border-gray-100">
+                                        <p className="font-semibold text-gray-900">{order.deliveryInfo?.fullName}</p>
+                                        <p className="text-gray-600 text-sm leading-relaxed">{order.deliveryInfo?.address}</p>
+                                        <p className="pt-1 text-sm">
+                                            <span className="text-muted-foreground">الهاتف:</span> <span className="font-mono text-gray-900">{order.deliveryInfo?.phoneNumber}</span>
                                         </p>
                                     </div>
                                 ) : (
-                                    <div className="space-y-2">
-                                        <p className="font-medium">{order.deliveryInfo?.pickupPoint?.stationName}</p>
-                                        <p>{order.deliveryInfo.pickupPoint?.address}</p>
-                                        <p className="text-muted-foreground">
-                                            الهاتف: {order.deliveryInfo?.pickupPoint?.phone}
+                                    <div className="space-y-2 text-gray-700 bg-gray-50/50 p-3 sm:p-4 rounded-xl border border-gray-100">
+                                        <p className="font-semibold text-gray-900">{order.deliveryInfo?.pickupPoint?.stationName}</p>
+                                        <p className="text-gray-600 text-sm leading-relaxed">{order.deliveryInfo.pickupPoint?.address}</p>
+                                        <p className="text-sm">
+                                            <span className="text-muted-foreground">الهاتف:</span> <span className="font-mono text-gray-900">{order.deliveryInfo?.pickupPoint?.phone}</span>
                                         </p>
-                                        <p className="pt-2 text-sm">
-                                            <span className="font-medium">المستلم:</span> {order.deliveryInfo?.fullName}
+                                        <p className="pt-1 text-sm border-t border-gray-200/60 mt-2">
+                                            <span className="font-medium text-gray-600">المستلم:</span> {order.deliveryInfo?.fullName}
                                         </p>
                                     </div>
                                 )}
@@ -421,127 +427,119 @@ export default function OrderDetailsPage() {
                     </Card>
                 </div>
 
-                {/* Order Actions & Info */}
-                <div className="space-y-6">
+                {/* Payment & Actions Side Column */}
+                <div className="space-y-4 sm:space-y-6">
+                    {/* Payment Info Card */}
                     <Card>
-                        <CardHeader>
-                            <CardTitle>معلومات الدفع</CardTitle>
+                        <CardHeader className="p-4 sm:p-6 pb-3 sm:pb-4">
+                            <CardTitle className="text-base sm:text-lg">معلومات الدفع</CardTitle>
                         </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div className="flex justify-between">
-                                <span className="text-muted-foreground">طريقة الدفع</span>
-                                <span>{getPaymentMethodInfo(order.paymentMethod)}</span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span className="text-muted-foreground">حالة الدفع</span>
-                                <Badge className={paymentStatusInfo.color}>
-                                    {paymentStatusInfo.text}
-                                </Badge>
-                            </div>
-                            {order.payoutProcessed && (
-                                <div className="flex justify-between">
-                                    <span className="text-muted-foreground">تم تحويل الأرباح</span>
-                                    <Badge className="bg-green-100 text-green-800">
-                                        مكتمل
+                        <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0 text-sm">
+                            <div className="space-y-3.5">
+                                <div className="flex justify-between items-center gap-2">
+                                    <span className="text-muted-foreground">طريقة الدفع</span>
+                                    <span className="font-medium text-gray-900">{getPaymentMethodInfo(order.paymentMethod)}</span>
+                                </div>
+                                <div className="flex justify-between items-center gap-2">
+                                    <span className="text-muted-foreground">حالة الدفع</span>
+                                    <Badge className={`${paymentStatusInfo.color} font-normal text-xs px-2 py-0`}>
+                                        {paymentStatusInfo.text}
                                     </Badge>
                                 </div>
-                            )}
-                            <div className="flex justify-between">
-                                <span className="text-muted-foreground">تاريخ الطلب</span>
-                                <span>{format(new Date(order.createdAt), 'dd/MM/yyyy')}</span>
-                            </div>
-                            <div className="flex justify-between items-center border p-3 rounded-xl bg-gray-50">
-                                <span className="text-muted-foreground font-medium">الكود السري</span>
+                                {order.payoutProcessed && (
+                                    <div className="flex justify-between items-center gap-2">
+                                        <span className="text-muted-foreground">تم تحويل الأرباح</span>
+                                        <Badge className="bg-green-100 text-green-800 font-normal text-xs px-2 py-0">
+                                            مكتمل
+                                        </Badge>
+                                    </div>
+                                )}
+                                <div className="flex justify-between items-center gap-2">
+                                    <span className="text-muted-foreground">تاريخ الطلب</span>
+                                    <span className="font-mono text-gray-900">{format(new Date(order.createdAt), 'dd/MM/yyyy')}</span>
+                                </div>
 
-                                <div className="flex items-center gap-3">
-                                    <Badge
-                                        variant="outline"
-                                        className="font-mono text-base py-1 px-3 rounded-lg bg-white shadow-sm border-gray-300"
-                                    >
-                                        {showSecretCode ? formatSecretCode(order.secretCode) : "••••••"}
-                                    </Badge>
-
-                                    <Button
-                                        variant="outline"
-                                        size="icon"
-                                        onClick={toggleSecretCode}
-                                        className="h-8 w-8 rounded-lg border-gray-300 hover:bg-gray-100"
-                                    >
-                                        {showSecretCode ? (
-                                            <EyeOff className="h-4 w-4" />
-                                        ) : (
-                                            <Eye className="h-4 w-4" />
-                                        )}
-                                    </Button>
-
-                                    <Button
-                                        variant="outline"
-                                        size="icon"
-                                        onClick={() => {
-                                            navigator.clipboard.writeText(order.secretCode);
-                                            toast.success("تم نسخ الكود السري");
-                                        }}
-                                        className="h-8 w-8 rounded-lg border-gray-300 hover:bg-gray-100"
-                                    >
-                                        <Copy className="h-4 w-4" />
-                                    </Button>
+                                {/* Secret Code Section */}
+                                <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3 border p-3 rounded-xl bg-gray-50 mt-4">
+                                    <span className="text-muted-foreground font-medium shrink-0">الكود السري</span>
+                                    <div className="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto">
+                                        <Badge
+                                            variant="outline"
+                                            className="font-mono text-sm sm:text-base py-1 px-3 rounded-lg bg-white shadow-sm border-gray-300 flex-1 sm:flex-initial text-center justify-center min-w-[90px]"
+                                        >
+                                            {showSecretCode ? formatSecretCode(order.secretCode) : "••••••"}
+                                        </Badge>
+                                        <div className="flex gap-1.5 shrink-0">
+                                            <Button
+                                                variant="outline"
+                                                size="icon"
+                                                onClick={toggleSecretCode}
+                                                className="h-8 w-8 rounded-lg border-gray-300 hover:bg-gray-100 bg-white"
+                                            >
+                                                {showSecretCode ? (
+                                                    <EyeOff className="h-4 w-4 text-gray-600" />
+                                                ) : (
+                                                    <Eye className="h-4 w-4 text-gray-600" />
+                                                )}
+                                            </Button>
+                                            <Button
+                                                variant="outline"
+                                                size="icon"
+                                                onClick={() => {
+                                                    navigator.clipboard.writeText(order.secretCode);
+                                                    toast.success("تم نسخ الكود السري");
+                                                }}
+                                                className="h-8 w-8 rounded-lg border-gray-300 hover:bg-gray-100 bg-white"
+                                            >
+                                                <Copy className="h-4 w-4 text-gray-600" />
+                                            </Button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </CardContent>
                     </Card>
 
-                    {/* QR Code Section */}
+                    {/* QR Code Card */}
                     <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <QrCode className="h-5 w-5" />
-                                QR Code للطلب
+                        <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-3">
+                            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                                <QrCode className="h-5 w-5 text-gray-700" />
+                                <span>QR Code للطلب</span>
                             </CardTitle>
-                            <CardDescription>
+                            <CardDescription className="text-xs sm:text-sm">
                                 استخدم هذا الكود لتحقيق الطلب عند الاستلام
                             </CardDescription>
                         </CardHeader>
-                        <CardContent className="flex flex-col items-center space-y-4">
-                            <div className="p-4 bg-white rounded-lg border">
+                        <CardContent className="p-4 sm:p-6 pt-2 flex flex-col items-center space-y-3">
+                            <div className="p-3 sm:p-4 bg-white rounded-xl border border-gray-200 shadow-sm max-w-full overflow-hidden flex justify-center items-center">
                                 <QRCodeSVG
                                     value={qrPayload}
-                                    size={200}
+                                    size={180}
                                     level="H"
                                     includeMargin={true}
+                                    style={{ maxWidth: '100%', height: 'auto' }}
                                 />
                             </div>
-                            <p className="text-sm text-center text-muted-foreground">
+                            <p className="text-xs text-center text-muted-foreground leading-normal max-w-[240px]">
                                 يمكن للمسوق مسح هذا الكود عند تسليم الطلب
                             </p>
                         </CardContent>
                     </Card>
 
+                    {/* Dynamic Action Buttons */}
                     <div className="space-y-2">
                         {order.deliveryStatus === 'delivered' && (
-                            <Button
-                                variant="outline"
-                                className="w-full border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300"
-                                asChild
-                            >
-                                <Link
-                                    href={`/returns/new?orderId=${order._id}`}
-                                    className="flex items-center gap-2"
-                                >
-                                    <RotateCcw className="h-4 w-4" />
-                                    طلب إرجاع
-                                </Link>
-                            </Button>
-
-                        )}
-                        {order.deliveryStatus === 'shipped' && (
-                            <Button variant="outline" className="w-full">
-                                تتبع الشحنة
+                            <Button className="w-full" variant="outline" onClick={() => router.push(`/profile/orders/${order._id}/review`)}>
+                                تقييم الطلب
                             </Button>
                         )}
-
                         {order.deliveryStatus === 'pending' && (
-                            <Button variant="outline" className="w-full" onClick={() => router.push('/contact')}>
-                                الاتصال بالدعم
+                            <Button className="w-full" variant="destructive" onClick={() => {
+                                // أضف منطق إلغاء الطلب هنا
+                                toast.info("ميزة إلغاء الطلب غير متوفرة حالياً");
+                            }}>
+                                إلغاء الطلب
                             </Button>
                         )}
                     </div>

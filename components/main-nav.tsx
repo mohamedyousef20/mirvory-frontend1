@@ -146,7 +146,6 @@ export function MainNav() {
     console.log(user, 'user***')
     try {
 
-      //console.log(user, 'isVendor')
       setLoading(prev => ({ ...prev, cart: true, wishlist: true, notifications: true }))
 
       // Fetch cart count
@@ -306,7 +305,7 @@ export function MainNav() {
   const navItems = [
     { href: "/", icon: <Home className="h-4 w-4" />, label: t("home") },
     { href: "/products", icon: <ShoppingBag className="h-4 w-4" />, label: t("products") },
-    { href: "/offers", icon: <Gift className="h-4 w-4" />, label: t("offers") },
+    // { href: "/offers", icon: <Gift className="h-4 w-4" />, label: t("offers") },
 
     {
       href: "/returns",

@@ -148,7 +148,9 @@ export function OrdersTab({
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
                     {orders.map((order: any) => {
                         const paymentMethodLabel = getPaymentMethodLabel(order.paymentMethod || 'cash');
-                        const deliveryMethodLabel = getDeliveryMethodLabel(order.deliveryMethod || 'home');
+                        const deliveryMethodLabel = getDeliveryMethodLabel(order.deliveryMethod === "home"
+                            ? order.deliveryInfo?.address
+                            : order.deliveryInfo?.pickupPoint?.stationName);
 
                         return (
                             <div
@@ -161,7 +163,7 @@ export function OrdersTab({
                                     <div className="flex items-center gap-2">
                                         <Hash className="h-3.5 w-3.5 text-slate-400" />
                                         <span className="text-sm font-bold text-slate-800 font-mono">
-                                            {order._id.substring(0, 6)}
+                                            {order.orderNumber}
                                         </span>
                                     </div>
                                     <div className="flex items-center gap-2">
@@ -205,9 +207,50 @@ export function OrdersTab({
                                                         {ar ? item.product?.title : item.product?.titleEn || item.product?.title}
                                                     </p>
                                                     <p className="text-xs text-slate-400 mt-0.5">
-                                                        {item.color && `${ar ? "لون: " : "Color: "}${item.color}`}
-                                                        {item.color && item.size && " · "}
-                                                        {item.size && `${ar ? "مقاس: " : "Size: "}${item.size}`}
+
+                                                        {/* Selected Color */}
+                                                        {item.color && (
+                                                            <>
+                                                                {ar ? "لون مختار: " : "Selected Color: "}
+                                                                {item.color}
+                                                            </>
+                                                        )}
+
+                                                        {/* Show all available colors */}
+                                                        {item.product?.colors?.length > 0 && (
+                                                            <div className="mt-1">
+                                                                {ar ? "الألوان: " : "Colors: "}
+                                                                {item.product.colors.map((c: any, i: number) => (
+                                                                    <span key={i} className="mr-1">
+                                                                        {c.name}{i !== item.product.colors.length - 1 ? "," : ""}
+                                                                    </span>
+                                                                ))}
+                                                            </div>
+                                                        )}
+
+                                                        {/* Separator */}
+                                                        {item.color && item.size && <span> · </span>}
+
+                                                        {/* Selected Size */}
+                                                        {item.size && (
+                                                            <>
+                                                                {ar ? "مقاس مختار: " : "Selected Size: "}
+                                                                {item.size}
+                                                            </>
+                                                        )}
+
+                                                        {/* All sizes */}
+                                                        {item.product?.sizes?.length > 0 && (
+                                                            <div className="mt-1">
+                                                                {ar ? "المقاسات: " : "Sizes: "}
+                                                                {item.product.sizes.map((s: string, i: number) => (
+                                                                    <span key={i} className="mr-1">
+                                                                        {s}{i !== item.product.sizes.length - 1 ? "," : ""}
+                                                                    </span>
+                                                                ))}
+                                                            </div>
+                                                        )}
+
                                                     </p>
                                                 </div>
                                                 <div className="shrink-0 flex flex-col items-end gap-1">
@@ -256,7 +299,7 @@ export function OrdersTab({
                                         <div className="bg-red-50 border border-red-100 rounded-xl p-2 text-center">
                                             <p className="text-[10px] text-red-400 uppercase tracking-wide">{ar ? "خصم" : "Disc"}</p>
                                             <p className="text-xs font-bold text-red-600 mt-0.5">
-                                                -{order.coupon?.discountAmount?.toFixed(2) || "0.00"}
+                                                -{order?.discount?.toFixed(2) || "0.00"}
                                             </p>
                                         </div>
                                         <div className="bg-blue-50 border border-blue-100 rounded-xl p-2 text-center">
@@ -305,8 +348,7 @@ export function OrdersTab({
                                             <div className="min-w-0">
                                                 <p className="text-[10px] text-slate-400">{ar ? "التوصيل" : "Delivery"}</p>
                                                 <p className="text-xs font-medium text-slate-700 truncate">
-                                                    {ar ? deliveryMethodLabel.ar : deliveryMethodLabel.en}
-                                                </p>
+                                                    {order.deliveryMethod || "N/A"}                                                </p>
                                             </div>
                                         </div>
 
@@ -316,7 +358,7 @@ export function OrdersTab({
                                             <div className="min-w-0">
                                                 <p className="text-[10px] text-slate-400">{ar ? "العنوان" : "Address"}</p>
                                                 <p className="text-xs font-medium text-slate-700 truncate">
-                                                    {order.deliveryAddress || order.deliveryInfo?.address || "N/A"}
+                                                    {order.deliveryInfo?.address || order.deliveryInfo?.pickupPoint.stationName}
                                                 </p>
                                             </div>
                                         </div>
@@ -327,10 +369,10 @@ export function OrdersTab({
                                         <User className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                                         <div className="flex-1 min-w-0">
                                             <p className="text-xs font-semibold text-slate-700 truncate">
-                                                {order.recipientInfo?.fullName || order.buyer?.fullName || "N/A"}
+                                                {order.deliveryInfo?.fullName || order.buyer?.fullName || "N/A"}
                                             </p>
                                             <p className="text-xs text-slate-400">
-                                                {order.recipientInfo?.phoneNumber || order.buyer?.phone || "N/A"}
+                                                {order.deliveryInfo?.phoneNumber || order.buyer?.phone || "N/A"}
                                             </p>
                                         </div>
                                     </div>
@@ -387,7 +429,6 @@ export function OrdersTab({
                                                     <SelectItem value="pending">{ar ? "قيد الانتظار" : "Pending"}</SelectItem>
                                                     <SelectItem value="paid">{ar ? "مدفوع" : "Paid"}</SelectItem>
                                                     <SelectItem value="failed">{ar ? "فشل" : "Failed"}</SelectItem>
-                                                    <SelectItem value="completed">{ar ? "مكتمل" : "Completed"}</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                         </div>

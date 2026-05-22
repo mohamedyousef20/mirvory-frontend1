@@ -18,7 +18,7 @@ const translations = {
   ar: {
     home: "الرئيسية",
     products: "المنتجات",
-    offers: "العروض",
+    // offers: "العروض",
     cart: "سلة التسوق",
     account: "حسابي",
     search: "ابحث عن منتجات...",

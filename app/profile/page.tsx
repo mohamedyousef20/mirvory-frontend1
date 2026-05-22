@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import Image from 'next/image';
 import { addressService, authService, userService } from '@/lib/api';
 import { useValidation } from '@/hooks/useValidation';
 import { MirvoryPageLoader } from '@/components/MirvoryLoader';
@@ -24,11 +23,7 @@ import {
     CardHeader,
     CardTitle
 } from "@/components/ui/card";
-import {
-    Avatar,
-    AvatarFallback,
-    AvatarImage
-} from "@/components/ui/avatar";
+
 import {
     Badge
 } from "@/components/ui/badge";
@@ -154,49 +149,10 @@ const Profile = () => {
         lastName: '',
         email: '',
         phone: '',
-        profileImage: '',
-        preferences: {
-            language: 'ar',
-            currency: 'EGP',
-            notifications: {
-                email: true,
-                sms: false,
-                push: true
-            }
-        }
+       
     });
 
-    // preference helpers
-    const handlePreferenceChange = (
-        key: 'language' | 'currency',
-        value: string
-    ) => {
-        setFormData(prev => ({
-            ...prev,
-            preferences: {
-                ...prev.preferences,
-                [key]: value
-            }
-        }));
-    };
-
-    const handleNotificationChange = (
-        key: 'email' | 'sms' | 'push',
-        value: boolean
-    ) => {
-        setFormData(prev => ({
-            ...prev,
-            preferences: {
-                ...prev.preferences,
-                notifications: {
-                    ...prev.preferences.notifications,
-                    [key]: value
-                }
-            }
-        }));
-    };
-
-    const [addressForm, setAddressForm] = useState({ ...INITIAL_ADDRESS_FORM });
+   
     const [passwordForm, setPasswordForm] = useState({
         currentPassword: '',
         newPassword: '',
@@ -215,7 +171,6 @@ const Profile = () => {
     const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [addressToDelete, setAddressToDelete] = useState<string | null>(null);
-    const [isUploadingImage, setIsUploadingImage] = useState(false);
 
     // Initialize validation
     const { errors, validate } = useValidation('updateProfile');
@@ -223,7 +178,6 @@ const Profile = () => {
     // تحميل البيانات الأولية
     useEffect(() => {
         fetchProfile();
-        fetchAddresses();
     }, []);
 
     const fetchProfile = async () => {
@@ -240,16 +194,6 @@ const Profile = () => {
                 lastName: userData.lastName || '',
                 email: userData.email || '',
                 phone: userData.phone || '',
-                profileImage: userData.profileImage || '',
-                preferences: userData.preferences || {
-                    language: 'ar',
-                    currency: 'EGP',
-                    notifications: {
-                        email: true,
-                        sms: false,
-                        push: true
-                    }
-                }
             });
         } catch (err: any) {
             setError(err.message || 'فشل تحميل الملف الشخصي');
@@ -259,132 +203,8 @@ const Profile = () => {
         }
     };
 
-    const fetchAddresses = async () => {
-        try {
-            const response = await addressService.getAddresses();
-            setAddresses(response.data.data || []);
-        } catch (err: any) {
-            console.error('Error fetching addresses:', err);
-            setAddresses([]);
-        }
-    };
-
-    // معالجة تغيير صورة الملف الشخصي
-    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-
-        setIsUploadingImage(true);
-        try {
-            // هنا يمكنك إضافة منطق رفع الصورة
-            // const formData = new FormData();
-            // formData.append('image', file);
-            // const response = await userService.uploadProfileImage(formData);
-
-            // مؤقتاً: عرض الصورة محلياً
-            const imageUrl = URL.createObjectURL(file);
-            setFormData(prev => ({ ...prev, profileImage: imageUrl }));
-            toast.success('تم تحديث صورة الملف الشخصي');
-        } catch (err) {
-            toast.error('فشل تحديث الصورة');
-        } finally {
-            setIsUploadingImage(false);
-        }
-    };
-
-    // معالجة إضافة/تحديث العنوان
-    const handleAddressSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setAddressLoading(true);
-        setAddressError('');
-
-        try {
-            if (!addressForm.city || !addressForm.district || !addressForm.street) {
-                setAddressError('جميع الحقول المطلوبة يجب ملؤها');
-                setAddressLoading(false);
-                return;
-            }
-
-            const addressData = {
-                state: addressForm.state,
-                city: addressForm.city,
-                district: addressForm.district,
-                street: addressForm.street,
-                buildingNumber: addressForm.buildingNumber,
-                apartmentNumber: addressForm.apartmentNumber,
-                landmark: addressForm.landmark,
-                label: addressForm.label,
-                isDefault: addressForm.isDefault
-            };
-
-            if (editingAddressId) {
-                await addressService.updateAddress(editingAddressId, addressData);
-                toast.success('تم تحديث العنوان بنجاح');
-            } else {
-                await addressService.addAddress(addressData);
-                toast.success('تم إضافة العنوان بنجاح');
-            }
-
-            // إعادة تعيين النموذج وتحديث البيانات
-            setAddressForm({ ...INITIAL_ADDRESS_FORM });
-            setIsEditingAddress(false);
-            setEditingAddressId(null);
-            await fetchAddresses();
-        } catch (err: any) {
-            console.error('Address error:', err);
-            setAddressError(err.response?.data?.message || 'فشل حفظ العنوان');
-            toast.error('فشل حفظ العنوان');
-        } finally {
-            setAddressLoading(false);
-        }
-    };
-
-    // معالجة حذف العنوان
-    const handleDeleteAddress = async () => {
-        if (!addressToDelete) return;
-
-        try {
-            await addressService.deleteAddress(addressToDelete);
-            toast.success('تم حذف العنوان بنجاح');
-            await fetchAddresses();
-            setIsDeleteDialogOpen(false);
-            setAddressToDelete(null);
-        } catch (err: any) {
-            console.error('Delete address error:', err);
-            toast.error(err.response?.data?.message || 'فشل حذف العنوان');
-        }
-    };
-
-    // معالجة تعيين العنوان الافتراضي
-    const handleSetDefaultAddress = async (addressId: string) => {
-        try {
-            await addressService.setDefaultAddress(addressId);
-            toast.success('تم تعيين العنوان كافتراضي بنجاح');
-            await fetchAddresses();
-        } catch (err: any) {
-            console.error('Set default address error:', err);
-            toast.error(err.response?.data?.message || 'فشل تعيين العنوان الافتراضي');
-        }
-    };
-
-    // معالجة تحرير العنوان
-    const handleEditAddress = (address: any) => {
-        setAddressForm({
-            state: address.state || '',
-            city: address.city || '',
-            district: address.district || '',
-            street: address.street || '',
-            buildingNumber: address.buildingNumber || '',
-            apartmentNumber: address.apartmentNumber || '',
-            landmark: address.landmark || '',
-            label: address.label || 'home',
-            isDefault: Boolean(address.isDefault)
-        });
-        setIsEditingAddress(true);
-        setEditingAddressId(address._id || address.id || null);
-        setAddressError('');
-    };
-
+  
+    
     // معالجة تغيير كلمة المرور
     const handlePasswordChange = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -543,73 +363,76 @@ const Profile = () => {
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
             {/* Header */}
-            <div className="bg-gradient-to-r from-primary to-primary/90 shadow-lg">
+            <div className="bg-gradient-to-r from-slate-900 via-primary to-slate-800 shadow-xl">
                 <div className="container mx-auto px-4 py-8">
-                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                        <div className="flex items-center gap-4">
-                            <div className="relative group">
-                                <Avatar className="h-24 w-24 border-4 border-white/20 shadow-xl">
-                                    <AvatarImage src={user?.profileImage} />
-                                    <AvatarFallback className="text-2xl bg-gradient-to-br from-primary/80 to-primary">
-                                        {getInitials()}
-                                    </AvatarFallback>
-                                </Avatar>
-                                <label className="absolute bottom-0 right-0 bg-primary text-white p-2 rounded-full cursor-pointer hover:bg-primary/90 transition-colors shadow-lg">
-                                    <Camera className="h-4 w-4" />
-                                    <input
-                                        type="file"
-                                        className="hidden"
-                                        accept="image/*"
-                                        onChange={handleImageUpload}
-                                        disabled={isUploadingImage}
-                                    />
-                                </label>
+                    <div className="flex flex-col md:flex-row items-center md:items-center justify-between gap-6">
+
+                        {/* Left Side - Profile Info */}
+                        <div className="flex items-center gap-5">
+
+                            {/* CIRCULAR AVATAR */}
+                            <div className="relative">
+                                <div className="h-24 w-24 rounded-full bg-white/10 backdrop-blur-md border-2 border-white/30 flex items-center justify-center text-white text-2xl font-bold shadow-lg overflow-hidden">
+                                    {user?.profileImage ? (
+                                        <img
+                                            src={user.profileImage}
+                                            alt="profile"
+                                            className="h-full w-full object-cover"
+                                        />
+                                    ) : (
+                                        `${user?.firstName?.[0] || ''}${user?.lastName?.[0] || ''}`
+                                    )}
+                                </div>
+
+                                {/* small status dot */}
+                                <span className="absolute bottom-1 right-1 h-4 w-4 rounded-full border-2 border-white bg-green-500"></span>
                             </div>
 
+                            {/* USER INFO */}
                             <div>
                                 <h1 className="text-3xl font-bold text-white">
                                     {user?.firstName} {user?.lastName}
                                 </h1>
-                                <p className="text-white/90 mt-1 flex items-center gap-2">
+
+                                <p className="text-white/80 mt-1 flex items-center gap-2">
                                     <Mail className="h-4 w-4" />
                                     {user?.email}
                                 </p>
-                                <div className="flex items-center gap-3 mt-3">
-                                    <Badge className={`${getRoleColor(user?.role)} text-white`}>
+
+                                <div className="flex items-center gap-2 mt-3 flex-wrap">
+
+                                    <span className={`px-3 py-1 rounded-full text-xs font-medium text-white ${getRoleColor(user?.role)}`}>
                                         {getRoleText(user?.role)}
-                                    </Badge>
+                                    </span>
+
                                     {user?.isVerified ? (
-                                        <Badge className="bg-green-500 text-white flex items-center gap-1">
+                                        <span className="px-3 py-1 rounded-full bg-green-500 text-white text-xs font-medium flex items-center gap-1">
                                             <ShieldCheck className="h-3 w-3" />
-                                            محقق
-                                        </Badge>
+                                            Verified
+                                        </span>
                                     ) : (
-                                        <Badge variant="destructive" className="flex items-center gap-1">
+                                        <span className="px-3 py-1 rounded-full bg-red-500 text-white text-xs font-medium flex items-center gap-1">
                                             <AlertCircle className="h-3 w-3" />
-                                            غير محقق
-                                        </Badge>
+                                            Not Verified
+                                        </span>
                                     )}
+
                                 </div>
                             </div>
                         </div>
 
+                        {/* Right Side - Action */}
                         <div className="flex items-center gap-3">
-                            <Button
-                                variant="outline"
-                                className="bg-white/10 text-white border-white/20 hover:bg-white/20"
-                                onClick={() => setActiveTab('password')}
-                            >
-                                <Lock className="h-4 w-4 mr-2" />
-                                تغيير كلمة المرور
-                            </Button>
+
                             {!user?.isVerified && (
                                 <Link href="/verifyEmail">
-                                    <Button className="bg-green-600 hover:bg-green-700">
-                                        <CheckCircle className="h-4 w-4 mr-2" />
-                                        تفعيل الحساب
-                                    </Button>
+                                    <button className="px-5 py-2 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white font-medium shadow-md transition">
+                                        <CheckCircle className="h-4 w-4 inline mr-2" />
+                                        Verify Account
+                                    </button>
                                 </Link>
                             )}
+
                         </div>
                     </div>
                 </div>
@@ -652,23 +475,8 @@ const Profile = () => {
                                         </Button>
                                     )}
 
-                                    <Button
-                                        variant={activeTab === 'preferences' ? 'default' : 'ghost'}
-                                        className="w-full justify-start"
-                                        onClick={() => setActiveTab('preferences')}
-                                    >
-                                        <Settings className="h-4 w-4 mr-3" />
-                                        التفضيلات
-                                    </Button>
-
-                                    <Button
-                                        variant={activeTab === 'addresses' ? 'default' : 'ghost'}
-                                        className="w-full justify-start"
-                                        onClick={() => setActiveTab('addresses')}
-                                    >
-                                        <MapPin className="h-4 w-4 mr-3" />
-                                        العناوين
-                                    </Button>
+                                  
+                                
 
                                     <Button
                                         variant={activeTab === 'security' ? 'default' : 'ghost'}
@@ -1034,415 +842,6 @@ const Profile = () => {
                                 </CardContent>
                             </Card>
                         )}
-
-                        {/* Preferences */}
-                        {activeTab === 'preferences' && (
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle className="flex items-center gap-2">
-                                        <Settings className="h-5 w-5" />
-                                        التفضيلات
-                                    </CardTitle>
-                                    <CardDescription>
-                                        إعدادات اللغة والعملة والإشعارات
-                                    </CardDescription>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="space-y-6">
-                                        <div className="grid md:grid-cols-2 gap-6">
-                                            <div className="space-y-3">
-                                                <Label htmlFor="language">اللغة</Label>
-                                                <Select
-                                                    value={formData.preferences.language}
-                                                    onValueChange={(value) => handlePreferenceChange('language', value)}
-                                                >
-                                                    <SelectTrigger>
-                                                        <SelectValue placeholder="اختر اللغة" />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        <SelectItem value="ar">العربية</SelectItem>
-                                                        <SelectItem value="en">English</SelectItem>
-                                                    </SelectContent>
-                                                </Select>
-                                            </div>
-
-                                            <div className="space-y-3">
-                                                <Label htmlFor="currency">العملة</Label>
-                                                <Select
-                                                    value={formData.preferences.currency}
-                                                    onValueChange={(value) => handlePreferenceChange('currency', value)}
-                                                >
-                                                    <SelectTrigger>
-                                                        <SelectValue placeholder="اختر العملة" />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        <SelectItem value="EGP">جنيه مصري (EGP)</SelectItem>
-                                                        <SelectItem value="USD">دولار أمريكي (USD)</SelectItem>
-                                                        <SelectItem value="EUR">يورو (EUR)</SelectItem>
-                                                    </SelectContent>
-                                                </Select>
-                                            </div>
-                                        </div>
-
-                                        <Separator />
-
-                                        <div>
-                                            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                                                <Bell className="h-5 w-5" />
-                                                إعدادات الإشعارات
-                                            </h3>
-                                            <div className="space-y-4">
-                                                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                                                    <div>
-                                                        <p className="font-medium">إشعارات البريد الإلكتروني</p>
-                                                        <p className="text-sm text-gray-600">تلقي تحديثات عبر البريد الإلكتروني</p>
-                                                    </div>
-                                                    <Switch
-                                                        checked={formData.preferences.notifications.email}
-                                                        onCheckedChange={(checked) => handleNotificationChange('email', checked)}
-                                                    />
-                                                </div>
-
-                                                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                                                    <div>
-                                                        <p className="font-medium">إشعارات التطبيق</p>
-                                                        <p className="text-sm text-gray-600">تلقي إشعارات داخل التطبيق</p>
-                                                    </div>
-                                                    <Switch
-                                                        checked={formData.preferences.notifications.push}
-                                                        onCheckedChange={(checked) => handleNotificationChange('push', checked)}
-                                                    />
-                                                </div>
-
-                                                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                                                    <div>
-                                                        <p className="font-medium">رسائل SMS</p>
-                                                        <p className="text-sm text-gray-600">تلقي رسائل نصية</p>
-                                                    </div>
-                                                    <Switch
-                                                        checked={formData.preferences.notifications.sms}
-                                                        onCheckedChange={(checked) => handleNotificationChange('sms', checked)}
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </CardContent>
-                                <CardFooter className="flex justify-end">
-                                    <Button onClick={handleProfileUpdate} disabled={loading}>
-                                        {loading ? (
-                                            <>
-                                                <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                                                جاري الحفظ...
-                                            </>
-                                        ) : 'حفظ التغييرات'}
-                                    </Button>
-                                </CardFooter>
-                            </Card>
-                        )}
-
-                        {/* Addresses */}
-                        {activeTab === 'addresses' && (
-                            <div className="space-y-6">
-                                <Card>
-                                    <CardHeader>
-                                        <div className="flex justify-between items-center">
-                                            <div>
-                                                <CardTitle className="flex items-center gap-2">
-                                                    <MapPin className="h-5 w-5" />
-                                                    العناوين
-                                                </CardTitle>
-                                                <CardDescription>
-                                                    إدارة عناوين الشحن والتوصيل
-                                                </CardDescription>
-                                            </div>
-                                            <Button onClick={() => setIsDialogOpen(true)}>
-                                                <Plus className="h-4 w-4 mr-2" />
-                                                إضافة عنوان جديد
-                                            </Button>
-                                        </div>
-                                    </CardHeader>
-                                    <CardContent>
-                                        {addressError && (
-                                            <Alert variant="destructive" className="mb-6">
-                                                <AlertCircle className="h-4 w-4" />
-                                                <AlertDescription>{addressError}</AlertDescription>
-                                            </Alert>
-                                        )}
-
-                                        {addresses.length === 0 ? (
-                                            <div className="text-center py-12">
-                                                <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
-                                                    <MapPin className="h-12 w-12 text-gray-400" />
-                                                </div>
-                                                <h3 className="text-lg font-semibold mb-2">لا توجد عناوين</h3>
-                                                <p className="text-gray-600 mb-6">أضف عنوانك الأول لبدء التسوق</p>
-                                                <Button onClick={() => setIsDialogOpen(true)}>
-                                                    إضافة أول عنوان
-                                                </Button>
-                                            </div>
-                                        ) : (
-                                            <div className="grid md:grid-cols-2 gap-4">
-                                                {addresses.map((address) => (
-                                                    <Card key={address._id} className={address.isDefault ? 'border-primary' : ''}>
-                                                        <CardHeader className="pb-3">
-                                                            <div className="flex justify-between items-start">
-                                                                <div className="flex items-center gap-2">
-                                                                    {getAddressIcon(address.label)}
-                                                                    <CardTitle className="text-base">
-                                                                        {address.label === 'home' ? 'منزل' :
-                                                                            address.label === 'work' ? 'عمل' : 'أخرى'}
-                                                                    </CardTitle>
-                                                                    {address.isDefault && (
-                                                                        <Badge className="bg-primary">افتراضي</Badge>
-                                                                    )}
-                                                                </div>
-                                                                <div className="flex gap-1">
-                                                                    <Button
-                                                                        size="sm"
-                                                                        variant="ghost"
-                                                                        onClick={() => handleEditAddress(address)}
-                                                                    >
-                                                                        <Edit className="h-4 w-4" />
-                                                                    </Button>
-                                                                    <Button
-                                                                        size="sm"
-                                                                        variant="ghost"
-                                                                        onClick={() => {
-                                                                            setAddressToDelete(address._id);
-                                                                            setIsDeleteDialogOpen(true);
-                                                                        }}
-                                                                    >
-                                                                        <Trash2 className="h-4 w-4 text-destructive" />
-                                                                    </Button>
-                                                                </div>
-                                                            </div>
-                                                        </CardHeader>
-                                                        <CardContent className="pb-3">
-                                                            <div className="space-y-2 text-sm">
-                                                                <div className="flex items-center gap-2">
-                                                                    <MapPin className="h-4 w-4 text-gray-400" />
-                                                                    <span>{address.street}</span>
-                                                                </div>
-                                                                <div className="flex items-center gap-2">
-                                                                    <Building className="h-4 w-4 text-gray-400" />
-                                                                    <span>{address.district}, {address.city}</span>
-                                                                </div>
-                                                                {address.landmark && (
-                                                                    <div className="flex items-center gap-2">
-                                                                        <Flag className="h-4 w-4 text-gray-400" />
-                                                                        <span>{address.landmark}</span>
-                                                                    </div>
-                                                                )}
-                                                            </div>
-                                                        </CardContent>
-                                                        <CardFooter>
-                                                            {!address.isDefault && (
-                                                                <Button
-                                                                    variant="outline"
-                                                                    size="sm"
-                                                                    className="w-full"
-                                                                    onClick={() => handleSetDefaultAddress(address._id)}
-                                                                >
-                                                                    تعيين كافتراضي
-                                                                </Button>
-                                                            )}
-                                                        </CardFooter>
-                                                    </Card>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </CardContent>
-                                </Card>
-
-                                {/* Add/Edit Address Dialog */}
-                                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                                    <DialogContent className="max-w-2xl">
-                                        <DialogHeader>
-                                            <DialogTitle>
-                                                {editingAddressId ? 'تعديل العنوان' : 'إضافة عنوان جديد'}
-                                            </DialogTitle>
-                                            <DialogDescription>
-                                                املأ جميع الحقول المطلوبة
-                                            </DialogDescription>
-                                        </DialogHeader>
-
-                                        <form onSubmit={handleAddressSubmit} className="space-y-4">
-                                            <div className="grid md:grid-cols-2 gap-4">
-                                                <div className="space-y-2">
-                                                    <Label htmlFor="state">المحافظة *</Label>
-                                                    <Select
-                                                        value={addressForm.state}
-                                                        onValueChange={(value) => setAddressForm(prev => ({ ...prev, state: value, city: '' }))}
-                                                    >
-                                                        <SelectTrigger>
-                                                            <SelectValue placeholder="اختر المحافظة" />
-                                                        </SelectTrigger>
-                                                        <SelectContent>
-                                                            {EGYPT_GOVERNORATES.map((gov) => (
-                                                                <SelectItem key={gov.value} value={gov.value}>
-                                                                    {gov.label}
-                                                                </SelectItem>
-                                                            ))}
-                                                        </SelectContent>
-                                                    </Select>
-                                                </div>
-
-                                                <div className="space-y-2">
-                                                    <Label htmlFor="city">المدينة *</Label>
-                                                    <Select
-                                                        value={addressForm.city}
-                                                        onValueChange={(value) => setAddressForm(prev => ({ ...prev, city: value }))}
-                                                        disabled={!addressForm.state}
-                                                    >
-                                                        <SelectTrigger>
-                                                            <SelectValue placeholder={addressForm.state ? "اختر المدينة" : "اختر المحافظة أولاً"} />
-                                                        </SelectTrigger>
-                                                        <SelectContent>
-                                                            {addressForm.state && EGYPT_GOVERNORATES
-                                                                .find(g => g.value === addressForm.state)
-                                                                ?.cities.map((city) => (
-                                                                    <SelectItem key={city} value={city}>
-                                                                        {city}
-                                                                    </SelectItem>
-                                                                ))}
-                                                        </SelectContent>
-                                                    </Select>
-                                                </div>
-
-                                                <div className="space-y-2">
-                                                    <Label htmlFor="district">الحي/المنطقة *</Label>
-                                                    <Input
-                                                        id="district"
-                                                        value={addressForm.district}
-                                                        onChange={(e) => setAddressForm(prev => ({ ...prev, district: e.target.value }))}
-                                                        placeholder="اسم الحي أو المنطقة"
-                                                    />
-                                                </div>
-
-                                                <div className="space-y-2">
-                                                    <Label htmlFor="street">الشارع *</Label>
-                                                    <Input
-                                                        id="street"
-                                                        value={addressForm.street}
-                                                        onChange={(e) => setAddressForm(prev => ({ ...prev, street: e.target.value }))}
-                                                        placeholder="اسم الشارع"
-                                                    />
-                                                </div>
-
-                                                <div className="space-y-2">
-                                                    <Label htmlFor="buildingNumber">رقم العمارة</Label>
-                                                    <Input
-                                                        id="buildingNumber"
-                                                        value={addressForm.buildingNumber}
-                                                        onChange={(e) => setAddressForm(prev => ({ ...prev, buildingNumber: e.target.value }))}
-                                                        placeholder="رقم العمارة"
-                                                    />
-                                                </div>
-
-                                                <div className="space-y-2">
-                                                    <Label htmlFor="apartmentNumber">رقم الشقة</Label>
-                                                    <Input
-                                                        id="apartmentNumber"
-                                                        value={addressForm.apartmentNumber}
-                                                        onChange={(e) => setAddressForm(prev => ({ ...prev, apartmentNumber: e.target.value }))}
-                                                        placeholder="رقم الشقة"
-                                                    />
-                                                </div>
-
-                                                <div className="md:col-span-2 space-y-2">
-                                                    <Label htmlFor="landmark">علامة مميزة</Label>
-                                                    <Input
-                                                        id="landmark"
-                                                        value={addressForm.landmark}
-                                                        onChange={(e) => setAddressForm(prev => ({ ...prev, landmark: e.target.value }))}
-                                                        placeholder="مقابل، بجوار، خلف..."
-                                                    />
-                                                </div>
-
-                                                <div className="space-y-2">
-                                                    <Label htmlFor="label">نوع العنوان</Label>
-                                                    <Select
-                                                        value={addressForm.label}
-                                                        onValueChange={(value) => setAddressForm(prev => ({ ...prev, label: value }))}
-                                                    >
-                                                        <SelectTrigger>
-                                                            <SelectValue placeholder="اختر النوع" />
-                                                        </SelectTrigger>
-                                                        <SelectContent>
-                                                            <SelectItem value="home">منزل</SelectItem>
-                                                            <SelectItem value="work">عمل</SelectItem>
-                                                            <SelectItem value="other">أخرى</SelectItem>
-                                                        </SelectContent>
-                                                    </Select>
-                                                </div>
-                                            </div>
-
-                                            <div className="flex items-center space-x-2 space-x-reverse pt-4">
-                                                <input
-                                                    type="checkbox"
-                                                    id="isDefault"
-                                                    checked={addressForm.isDefault}
-                                                    onChange={(e) => setAddressForm(prev => ({ ...prev, isDefault: e.target.checked }))}
-                                                    className="h-4 w-4 rounded border-gray-300"
-                                                />
-                                                <Label htmlFor="isDefault" className="text-sm">
-                                                    تعيين كعنوان افتراضي
-                                                </Label>
-                                            </div>
-                                        </form>
-
-                                        <DialogFooter>
-                                            <Button
-                                                variant="outline"
-                                                onClick={() => {
-                                                    setIsDialogOpen(false);
-                                                    setAddressForm({ ...INITIAL_ADDRESS_FORM });
-                                                    setEditingAddressId(null);
-                                                }}
-                                            >
-                                                إلغاء
-                                            </Button>
-                                            <Button onClick={handleAddressSubmit} disabled={addressLoading}>
-                                                {addressLoading ? (
-                                                    <>
-                                                        <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                                                        جاري الحفظ...
-                                                    </>
-                                                ) : editingAddressId ? 'تحديث العنوان' : 'إضافة العنوان'}
-                                            </Button>
-                                        </DialogFooter>
-                                    </DialogContent>
-                                </Dialog>
-
-                                {/* Delete Address Dialog */}
-                                <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-                                    <DialogContent>
-                                        <DialogHeader>
-                                            <DialogTitle>حذف العنوان</DialogTitle>
-                                            <DialogDescription>
-                                                هل أنت متأكد من حذف هذا العنوان؟ لا يمكن التراجع عن هذا الإجراء.
-                                            </DialogDescription>
-                                        </DialogHeader>
-                                        <DialogFooter>
-                                            <Button
-                                                variant="outline"
-                                                onClick={() => {
-                                                    setIsDeleteDialogOpen(false);
-                                                    setAddressToDelete(null);
-                                                }}
-                                            >
-                                                إلغاء
-                                            </Button>
-                                            <Button variant="destructive" onClick={handleDeleteAddress}>
-                                                حذف
-                                            </Button>
-                                        </DialogFooter>
-                                    </DialogContent>
-                                </Dialog>
-                            </div>
-                        )}
-
                         {/* Security & Password */}
                         {activeTab === 'security' && (
                             <div className="space-y-6">
@@ -1590,10 +989,7 @@ const Profile = () => {
                                                 <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
                                                 <span>غير كلمة المرور بانتظام (كل 3-6 أشهر)</span>
                                             </li>
-                                            <li className="flex items-start gap-2">
-                                                <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-                                                <span>تفعيل المصادقة الثنائية إن أمكن</span>
-                                            </li>
+                                        
                                         </ul>
                                     </CardContent>
                                 </Card>

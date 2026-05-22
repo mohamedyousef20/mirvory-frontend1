@@ -185,7 +185,7 @@ export const authService = {
     currentPassword: string;
     newPassword: string;
     confirmPassword: string
-  }) => api.patch('/api/auth/change-password', data),
+  }) => api.patch('/api/users/change-password', data),
 
 };
 
@@ -238,7 +238,7 @@ export const userService = {
 
   toggleUserActive: (userId: string, isActive: boolean) =>
     api.patch('/api/users/admin/toggle-active', { userId, isActive }),
-  
+
   deleteUser: (id: string) => api.delete(`/api/users/admin/permanently-delete`, { data: { userId: id } }),
 };
 
@@ -424,10 +424,12 @@ export const orderService = {
 
   updateDeliveryStatus: (id: string, deliveryStatus: string) =>
     api.patch(`/api/orders/updateDelivery`, { id, deliveryStatus }),
-
-  updatePaymentStatus: (id: string, status: string) =>
-    api.patch(`/api/orders/${id}/payment-status`, { status }),
-
+  
+  updatePaymentStatus: (orderId: string, status: string) =>
+    api.patch(`/api/orders/update-payment`, {
+      orderId,
+      paymentStatus: status,
+    }),
   confirmPreparation: (orderId: string) =>
     api.patch(`/api/orders/prepared/${orderId}`),
   confirmItemPreparation: (orderId: string, itemId: string) =>
